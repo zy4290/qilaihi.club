@@ -6,13 +6,14 @@ from tornado.options import define, options
 from route import page
 from weixin import wxservice
 from api.v1 import httpapi
-import logging
 
 define('port', 80, type=int)
+define('debug', True, type=bool)
+define('autoreload', True, type=bool)
 
 if __name__ == "__main__":
     options.parse_command_line()
-
+    settings = {'debug': options.debug, 'autoreload': options.autoreload}
     appplication = web.Application([
 
         # 页面路由
@@ -37,7 +38,6 @@ if __name__ == "__main__":
 
         # 微信服务
         (r'/weixin', wxservice.WeiXinMessageHandler)
-    ])
+    ], **settings)
     appplication.listen(options.port)
-    logging.info('server started')
     ioloop.IOLoop.current().start()
