@@ -2,11 +2,17 @@
 # coding: utf-8
 
 from tornado import web, ioloop
+from tornado.options import define, options
 from route import page
 from weixin import wxservice
 from api.v1 import httpapi
+import logging
+
+define('port', 80, type=int)
 
 if __name__ == "__main__":
+    options.parse_command_line()
+
     appplication = web.Application([
 
         # 页面路由
@@ -32,5 +38,6 @@ if __name__ == "__main__":
         # 微信服务
         (r'/weixin', wxservice.WeiXinMessageHandler)
     ])
-    appplication.listen(80)
+    appplication.listen(options.port)
+    logging.info('server started')
     ioloop.IOLoop.current().start()
