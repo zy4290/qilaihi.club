@@ -30,7 +30,7 @@ if __name__ == "__main__":
         # (r'/api/v1/getuser', None),
 
         # 微信服务
-        # (r'/weixin', wxservice.WeiXinMessageHandler)
+        (r'/weixin', wxservice.WeiXinMessageHandler)
     ])
     appplication.listen(80)
     ioloop.IOLoop.current().start()
