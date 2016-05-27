@@ -16,7 +16,7 @@ class WeiXinMessageHandler(web.RequestHandler):
         tmp_list = [token, timestamp, nonce]
         tmp_list.sort()
         tmp_str = '%s%s%s' % tuple(tmp_list)
-        tmp_str = hashlib.sha1(tmp_str).hexdigest()
+        tmp_str = hashlib.sha1(tmp_str.encode()).hexdigest()
         if tmp_str == signature:
             self.write(echostr)
         else:
