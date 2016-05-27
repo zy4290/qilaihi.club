@@ -8,10 +8,10 @@ import hashlib
 class WeiXinMessageHandler(web.RequestHandler):
 
     def get(self):
-        signature = self.request.arguments['signature'][0]
-        timestamp = self.request.arguments['timestamp'][0]
-        nonce = self.request.arguments['nonce'][0]
-        echostr = self.request.arguments['echostr'][0]
+        signature = str(self.request.arguments['signature'][0])
+        timestamp = str(self.request.arguments['timestamp'][0])
+        nonce = str(self.request.arguments['nonce'][0])
+        echostr = str(self.request.arguments['echostr'][0])
         token = 'qilaihiclubweixinservice'
         tmp_list = [token, timestamp, nonce]
         tmp_list.sort()
