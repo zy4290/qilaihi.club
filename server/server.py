@@ -14,8 +14,7 @@ define('autoreload', True, type=bool)
 if __name__ == "__main__":
     options.parse_command_line()
     settings = {'debug': options.debug, 'autoreload': options.autoreload}
-    appplication = web.Application([
-
+    application = web.Application([
         # 页面路由
         (r'/', page.HomePageHandler),
         (r'/event', page.EventPageHandler),
@@ -39,5 +38,5 @@ if __name__ == "__main__":
         # 微信服务
         (r'/weixin', wxservice.WeiXinMessageHandler)
     ], **settings)
-    appplication.listen(options.port)
+    application.listen(options.port)
     ioloop.IOLoop.current().start()
