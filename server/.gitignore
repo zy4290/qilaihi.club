@@ -1,6 +1,9 @@
+__local/
 __pycache__/
 .idea/
 
 *.pyc
 *.log
-test*.py
+*test*.py
+
+__param__.py
