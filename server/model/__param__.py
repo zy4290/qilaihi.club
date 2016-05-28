@@ -4,9 +4,9 @@
 from peewee import MySQLDatabase
 
 db = MySQLDatabase
-ip = 'qilaihi.me'
+ip = '__ip__'
 port = 3306
-user = 'root'
-password = '98027531z'
-database = 'qilaihi'
-charset = 'utf8'
+user = '__user__'
+password = '__password__'
+database = '__schema__'
+charset = '__charset__'
