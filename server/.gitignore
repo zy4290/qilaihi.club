@@ -6,3 +6,5 @@ __pycache__/
 *.log
 *test*.py
 
+__param__.py
+
