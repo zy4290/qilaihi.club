@@ -8,11 +8,11 @@ from tornado import httpclient
 from api.v1.lbs import __util__
 
 
-async def get(query, region):
+def get(query, region):
     url = __util__.get_baidu_api_url(query, region)
-    http_client = httpclient.AsyncHTTPClient()
+    http_client = httpclient.HTTPClient()
     try:
-        response = await http_client.fetch(url)
+        response = http_client.fetch(url)
         logging.debug(response.body.decode())
         return response.body.decode()
     except Exception as e:
