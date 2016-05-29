@@ -1,8 +1,11 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-from api.v1.lbs import __util__
+import logging
+
 from tornado import httpclient
+
+from api.v1.lbs import __util__
 
 
 async def get(query, region):
@@ -10,7 +13,8 @@ async def get(query, region):
     http_client = httpclient.AsyncHTTPClient()
     try:
         response = await http_client.fetch(url)
-        return response.body
+        logging.debug(response.body.decode())
+        return response.body.decode()
     except Exception as e:
         raise e
     finally:
