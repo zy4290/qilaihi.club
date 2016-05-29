@@ -1,9 +1,0 @@
-__local/
-__pycache__/
-.idea/
-
-*.pyc
-*.log
-*test*.py
-
-model/__param__.py
