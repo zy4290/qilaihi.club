@@ -5,7 +5,8 @@
     tornado-4.3
 
 ## 启动
-    server.py -loggin=DEBUG -log_file_prefix=./log -port=8080 -debug=True -autoreload=True
+    python3 server.py -logging=DEBUG -log_file_prefix=./log -port=8080 \
+    -debug=True -autoreload=True
     
 ## 配置
 ### model/__param__.py for db connection
