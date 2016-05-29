@@ -1,12 +1,14 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-from peewee import MySQLDatabase
+from playhouse.pool import PooledMySQLDatabase
 
-db = MySQLDatabase
-ip = '__ip__'
+db = PooledMySQLDatabase
+max_connection = 100
+stale_timeout = None
+ip = 'qilaihi.me'
 port = 3306
-user = '__user__'
-password = '__password__'
-database = '__schema__'
-charset = '__charset__'
+user = 'root'
+password = '98027531z'
+database = 'qilaihi'
+charset = 'utf8'

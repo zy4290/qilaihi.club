@@ -19,8 +19,6 @@ CREATE TABLE `config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 """
 
-db = dbutil.get_db()
-
 
 class Config(Model):
     id = IntegerField()
@@ -33,4 +31,4 @@ class Config(Model):
     baiduak = CharField()
 
     class Meta:
-        database = db
+        database = dbutil.get_db()
