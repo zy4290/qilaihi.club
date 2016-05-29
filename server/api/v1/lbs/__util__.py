@@ -1,14 +1,16 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
-from urllib import parse
+
+from tornado.escape import url_escape
+
+from model.config import Config
 
 
 def _get_baidu_ak():
-    return '4dbe2ddacb82cc8360444cddac6c62f2'
+    return Config.select().get().baiduak
 
 
 def get_baidu_api_url(query, region, output='json'):
     return 'http://api.map.baidu.com/place/v2/search?q=' + \
-        parse.quote(query) + '&region=' + \
-        parse.quote(region) + '&output=' + \
-        output + '&ak=' + _get_baidu_ak()
+            url_escape(query) + '&region=' + url_escape(region) + \
+            '&output=' + output + '&ak=' + _get_baidu_ak()
