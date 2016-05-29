@@ -1,11 +1,14 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-from xml.etree import ElementTree
 import hashlib
 import logging
 
-from tornado import web
+from tornado import web, ioloop
+
+from weixin import config
+from weixin.msghandler.msgparser import MsgParser
+from model.config import Config
 
 
 class WeiXinMessageHandler(web.RequestHandler):
@@ -16,7 +19,7 @@ class WeiXinMessageHandler(web.RequestHandler):
             logging.debug(
                 'signature:{0} timestamp:{1} nonce:{2} echostr:{3}'.
                 format(signature, timestamp, nonce, echostr))
-            token = 'qilaihiclubweixinservice'
+            token = Config().select().get().access_token()
             tmp_list = sorted([token, timestamp, nonce])
             tmp_str = ''.join(tmp_list)
             logging.debug('before sha1: {0}'.format(tmp_str))
@@ -28,7 +31,7 @@ class WeiXinMessageHandler(web.RequestHandler):
                 return False
         except Exception as e:
             logging.error(str(e))
-            return True
+            return False
 
     def get(self):
         try:
@@ -40,19 +43,18 @@ class WeiXinMessageHandler(web.RequestHandler):
             if valid:
                 self.write(echostr)
             else:
-                self.write('')
+                self.write(config.success_response)
         except Exception as e:
             logging.error(str(e))
-            self.write('')
+            self.write(config.error_response)
 
     def post(self):
-        xml = self.request.body.decode()
-        logging.debug(xml)
         try:
-            from weixin import config
-            data = ElementTree.fromstring(xml)
-            config.msg_type_dict[data.find('MsgType').text].parse(data)
-            self.write('success')
+            xml = self.request.body.decode()
+            logging.debug(xml)
+            self.write(config.success_response)
+            ioloop.IOLoop.current().spawn_callback(
+                MsgParser().parse, xml)
         except Exception as e:
-            self.write('')
             logging.error(str(e))
+            self.write(config.error_response)
