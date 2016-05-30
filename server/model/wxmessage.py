@@ -34,6 +34,7 @@ class WXMessage(Model):
     response = IntegerField()
     responsetime = DateTimeField()
     msg = CharField()
+    msgid = CharField()
 
     class Meta:
         database = dbutil.get_db()
