@@ -11,13 +11,13 @@ from api.v1.lbs import place
 
 class PlaceServiceHandler(web.RequestHandler):
 
-    def post(self):
+    async def post(self):
         try:
             request = escape.json_decode(self.request.body.decode())
             query = request['query']
             region = request['region']
             logging.debug('query: {0} region: {1}'.format(query, region))
-            response = place.get(query, region)
+            response = await place.get(query, region)
             self.write(response)
         except Exception as e:
             logging.error(str(e))
