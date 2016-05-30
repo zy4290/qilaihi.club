@@ -47,7 +47,7 @@ class MsgParser:
                 msgid=_msgid,
                 msg=xml
             )
-            yield ThreadPoolExecutor(1).submit(wxmsg.save())
+            yield ThreadPoolExecutor(1).submit(wxmsg.save)
             logging.debug('wxmessage saved.')
         except Exception as e:
             raise e

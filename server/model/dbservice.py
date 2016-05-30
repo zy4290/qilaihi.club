@@ -14,11 +14,11 @@ db = dbutil.get_db()
 class DatabaseRequestHandler(RequestHandler):
     @gen.coroutine
     def prepare(self):
-        yield ThreadPoolExecutor(1).submit(db.connect())
+        yield ThreadPoolExecutor(1).submit(db.connect)
         return super(DatabaseRequestHandler, self).prepare()
 
     @gen.coroutine
     def on_finish(self):
         if not db.is_closed():
-            yield ThreadPoolExecutor(1).submit(db.close())
+            yield ThreadPoolExecutor(1).submit(db.close)
         return super(DatabaseRequestHandler, self).on_finish()

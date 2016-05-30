@@ -60,7 +60,7 @@ def send_custom_msg(msg, reply):
     custom_text['touser'] = msg.fromusername
     custom_text['text']['content'] = reply
 
-    config = yield ThreadPoolExecutor(1).submit(Config().select().get())
+    config = yield ThreadPoolExecutor(1).submit(Config().select().get)
     url = custom_msg_url.format(config.accesstoken)
 
     http_client = AsyncHTTPClient()

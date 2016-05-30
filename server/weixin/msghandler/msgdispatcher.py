@@ -33,11 +33,11 @@ class MsgDispatcher:
         )
 
         try:
-            yield ThreadPoolExecutor(1).submit(old_msg.save())
+            yield ThreadPoolExecutor(1).submit(old_msg.save)
         except Exception as e:
             logging.error(str(e))
         finally:
-            yield ThreadPoolExecutor(1).submit(msg.delete())
+            yield ThreadPoolExecutor(1).submit(msg.delete)
 
     @staticmethod
     @gen.coroutine
@@ -46,7 +46,7 @@ class MsgDispatcher:
             try:
                 # retrieve un-responded message
                 msg = yield ThreadPoolExecutor(1).submit(
-                    WXMessage().select().order_by(WXMessage.createtime.asc()).get())
+                    WXMessage().select().order_by(WXMessage.createtime.asc()).get)
                 if msg is None:
                     continue
 
