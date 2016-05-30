@@ -3,9 +3,12 @@
 
 from tornado import web, ioloop
 from tornado.options import define, options
+
+from api.v1 import placeservice
 from route import page
 from weixin import wxservice
-from api.v1 import httpapi
+from weixin import wxutil
+from weixin.msghandler.msgdispatcher import MsgDispatcher
 
 define('port', 80, type=int)
 define('debug', True, type=bool)
@@ -23,7 +26,7 @@ if __name__ == "__main__":
 
         # HTTP API
         # 地址API
-        (r'/api/v1/place', httpapi.PlaceServiceHandler),
+        (r'/api/v1/place', placeservice.PlaceServiceHandler),
         # (r'/api/v1/geocoding', None),
 
         # 活动API
@@ -40,3 +43,12 @@ if __name__ == "__main__":
     ], **settings)
     application.listen(options.port)
     ioloop.IOLoop.current().start()
+
+    # 每0.1秒取数据库未处理消息
+    ioloop.IOLoop.current().spawn_callback(MsgDispatcher.process())
+
+    # 每2399秒刷新access token
+    # TODO 多实例部署时需要挪出去
+    ioloop.PeriodicCallback(wxutil.refresh_access_token(),
+                            2399 * 1000
+                            ).start()
