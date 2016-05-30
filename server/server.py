@@ -45,7 +45,7 @@ if __name__ == "__main__":
     ioloop.IOLoop.current().start()
 
     # 每0.1秒取数据库未处理消息
-    ioloop.IOLoop.current().spawn_callback(MsgDispatcher.process())
+    ioloop.IOLoop.current().spawn_callback(MsgDispatcher.process)
 
     # 每2399秒刷新access token
     # TODO 多实例部署时需要挪出去
