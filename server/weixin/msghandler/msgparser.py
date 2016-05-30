@@ -6,6 +6,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from xml.etree import ElementTree
 
+from tornado import gen
+
 from model.wxmessage import WXMessage
 
 
@@ -19,7 +21,8 @@ class MsgParser:
             return None
 
     @staticmethod
-    async def parse(xml):
+    @gen.coroutine
+    def parse(xml):
         try:
             xml_data = ElementTree.fromstring(xml)
             _tousername = MsgParser._text(xml_data.find('ToUserName'))
@@ -44,7 +47,7 @@ class MsgParser:
                 msgid=_msgid,
                 msg=xml
             )
-            await ThreadPoolExecutor(1).submit(wxmsg.save())
+            yield ThreadPoolExecutor(1).submit(wxmsg.save())
             logging.debug('wxmessage saved.')
         except Exception as e:
             raise e
