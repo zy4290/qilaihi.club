@@ -6,7 +6,7 @@ from peewee import *
 from model import basemodel
 
 
-class WXMessage(basemodel.BaseModel):
+class Oldwxmessage(basemodel.BaseModel):
     content = CharField(null=True)
     tousername = CharField(null=True)
     fromusername = CharField(null=True)
@@ -19,5 +19,5 @@ class WXMessage(basemodel.BaseModel):
     msg = CharField(null=True)
 
     class Meta:
-        db_table = 'wxmessage'
+        db_table = 'oldwxmessage'
         schema = 'qilaihi'

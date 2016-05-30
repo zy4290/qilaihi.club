@@ -3,32 +3,18 @@
 
 from peewee import *
 
-from model import dbutil
-
-"""
-CREATE TABLE `config` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `accesstoken` varchar(100) DEFAULT NULL,
-  `expires` int(11) DEFAULT NULL,
-  `appsecret` varchar(100) DEFAULT NULL,
-  `appid` varchar(100) DEFAULT NULL,
-  `token` varchar(100) DEFAULT NULL,
-  `encodingaeskey` varchar(100) DEFAULT NULL,
-  `baiduak` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-"""
+from model import basemodel
 
 
-class Config(Model):
-    id = IntegerField()
-    accesstoken = CharField()
-    expires = IntegerField()
-    appsecret = CharField()
-    appid = CharField()
-    token = CharField()
-    encodingaeskey = CharField()
-    baiduak = CharField()
+class Config(basemodel.BaseModel):
+    accesstoken = CharField(null=True)
+    expires = IntegerField(null=True)
+    appsecret = CharField(null=True)
+    appid = CharField(null=True)
+    token = CharField(null=True)
+    encodingaeskey = CharField(null=True)
+    baiduak = CharField(null=True)
 
     class Meta:
-        database = dbutil.get_db()
+        db_table = 'config'
+        schema = 'qilaihi'
