@@ -3,10 +3,8 @@
 
 import logging
 from concurrent.futures import ThreadPoolExecutor
-
 from datetime import datetime
 from xml.etree import ElementTree
-
 
 from model.wxmessage import WXMessage
 
