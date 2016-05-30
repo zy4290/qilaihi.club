@@ -8,6 +8,7 @@ from xml.etree import ElementTree
 
 from tornado import gen
 
+from model import dbutil
 from model.wxmessage import WXMessage
 
 
@@ -47,7 +48,11 @@ class MsgParser:
                 msgid=_msgid,
                 msg=xml
             )
+            dbutil.get_db().connect()
             yield ThreadPoolExecutor(1).submit(wxmsg.save)
             logging.debug('wxmessage saved.')
         except Exception as e:
             raise e
+        finally:
+            if not dbutil.get_db().is_closed():
+                dbutil.get_db().close()

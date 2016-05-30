@@ -49,6 +49,6 @@ if __name__ == "__main__":
 
     # 每2399秒刷新access token
     # TODO 多实例部署时需要挪出去
-    ioloop.PeriodicCallback(wxutil.refresh_access_token(),
+    ioloop.PeriodicCallback(wxutil.refresh_access_token,
                             2399 * 1000
                             ).start()

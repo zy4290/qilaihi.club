@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from tornado import gen
 from tornado.ioloop import IOLoop
 
+from model import dbutil
 from model.oldwxmessage import Oldwxmessage
 from model.wxmessage import WXMessage
 from weixin import wxutil
@@ -33,11 +34,14 @@ class MsgDispatcher:
         )
 
         try:
+            dbutil.get_db().connect()
             yield ThreadPoolExecutor(1).submit(old_msg.save)
         except Exception as e:
             logging.error(str(e))
         finally:
             yield ThreadPoolExecutor(1).submit(msg.delete)
+            if not dbutil.get_db().is_closed():
+                dbutil.get_db().close()
 
     @staticmethod
     @gen.coroutine
