@@ -4,14 +4,15 @@
 import hashlib
 import logging
 
-from tornado import web, ioloop
+from tornado import ioloop
 
+from model.config import Config
+from model.dbservice import DatabaseRequestHandler
 from weixin import config
 from weixin.msghandler.msgparser import MsgParser
-from model.config import Config
 
 
-class WeiXinMessageHandler(web.RequestHandler):
+class WeiXinMessageHandler(DatabaseRequestHandler):
 
     @staticmethod
     def _validate(signature, timestamp, nonce, echostr):
