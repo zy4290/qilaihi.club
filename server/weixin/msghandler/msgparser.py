@@ -9,7 +9,7 @@ from xml.etree import ElementTree
 from tornado import gen
 from tornado.ioloop import IOLoop
 
-from model import dbutil
+from model.dbutil import DBUtil
 from model.wxmessage import WXMessage
 from weixin.msghandler.msgdispatcher import MsgDispatcher
 
@@ -50,7 +50,6 @@ class MsgParser:
             msg=xml
         )
 
-        db_util = dbutil.DBUtil()
-        yield db_util.do(wxmsg.save)
+        yield DBUtil.do(wxmsg.save)
         logging.debug('wxmessage saved.')
         IOLoop.current().spawn_callback(MsgDispatcher.process, wxmsg)

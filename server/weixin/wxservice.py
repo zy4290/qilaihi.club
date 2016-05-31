@@ -7,7 +7,7 @@ import logging
 from tornado import web, ioloop, gen
 
 from model.config import Config
-from model import dbutil
+from model.dbutil import DBUtil
 from weixin import config
 from weixin.msghandler.msgparser import MsgParser
 
@@ -21,8 +21,7 @@ class WeiXinMessageHandler(web.RequestHandler):
             logging.debug(
                 'signature:{0} timestamp:{1} nonce:{2} echostr:{3}'.
                 format(signature, timestamp, nonce, echostr))
-            db_util = dbutil.DBUtil()
-            _config = yield db_util.do(Config().select().get)
+            _config = yield DBUtil.do(Config().select().get)
             tmp_list = sorted([_config.token, timestamp, nonce])
             tmp_str = ''.join(tmp_list)
             logging.debug('before sha1: {0}'.format(tmp_str))
@@ -33,7 +32,7 @@ class WeiXinMessageHandler(web.RequestHandler):
             else:
                 return False
         except Exception as e:
-            logging.error(str(e))
+            logging.exception('WeiXinMessageHandler error: {0}'.format(str(e)))
             return False
 
     @gen.coroutine
@@ -49,8 +48,8 @@ class WeiXinMessageHandler(web.RequestHandler):
             else:
                 self.write(config.error_response)
         except Exception as e:
-            logging.error(str(e))
             self.write(config.error_response)
+            logging.exception('WeiXinMessageHandler error: {0}'.format(str(e)))
 
     @gen.coroutine
     def post(self):
@@ -61,5 +60,5 @@ class WeiXinMessageHandler(web.RequestHandler):
             ioloop.IOLoop.current().spawn_callback(
                 MsgParser().parse, xml)
         except Exception as e:
-            logging.error(str(e))
             self.write(config.error_response)
+            logging.exception('WeiXinMessageHandler error: {0}'.format(str(e)))

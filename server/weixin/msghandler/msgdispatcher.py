@@ -1,12 +1,13 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-import logging, datetime
+import logging
+import datetime
 
 from tornado import gen
 from tornado.ioloop import IOLoop
 
-from model import dbutil
+from model.dbutil import DBUtil
 from model.oldwxmessage import Oldwxmessage
 from model.wxmessage import WXMessage
 from weixin import wxutil
@@ -31,7 +32,7 @@ class MsgDispatcher:
             msgid=msg.msgid,
             msg=msg.msg
         )
-        yield [dbutil.DBUtil().do(old_msg.save), dbutil.DBUtil().do(msg.delete_instance)]
+        yield [DBUtil.do(old_msg.save), DBUtil.do(msg.delete_instance)]
         logging.debug('move msg to old.')
 
     @staticmethod

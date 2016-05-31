@@ -8,7 +8,7 @@ import json
 from tornado import gen
 from tornado.httpclient import AsyncHTTPClient
 
-from model import dbutil
+from model.dbutil import DBUtil
 from model.config import Config
 from weixin.config import access_token_url, custom_msg_url
 
@@ -16,9 +16,7 @@ from weixin.config import access_token_url, custom_msg_url
 @gen.coroutine
 def refresh_access_token():
     logging.info('开始刷新微信access token')
-
-    db_util = dbutil.DBUtil()
-    config = yield db_util.do(Config.select().get)
+    config = yield DBUtil.do(Config.select().get)
 
     http_client = AsyncHTTPClient()
     logging.debug(access_token_url.format(config.appid, config.appsecret))
@@ -65,8 +63,7 @@ def send_custom_msg(msg, reply):
     custom_text['text']['content'] = reply
     logging.debug(custom_text)
 
-    db_util = dbutil.DBUtil()
-    config = yield db_util.do(Config.select().get)
+    config = yield DBUtil.do(Config.select().get)
     url = custom_msg_url.format(config.accesstoken)
     logging.debug(url)
 
