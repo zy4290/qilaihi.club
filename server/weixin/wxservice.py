@@ -23,7 +23,7 @@ class WeiXinMessageHandler(web.RequestHandler):
                 format(signature, timestamp, nonce, echostr))
             db_util = dbutil.DBUtil()
             _config = yield db_util.do(Config().select().get)
-            tmp_list = sorted([_config.accesstoken, timestamp, nonce])
+            tmp_list = sorted([_config.token, timestamp, nonce])
             tmp_str = ''.join(tmp_list)
             logging.debug('before sha1: {0}'.format(tmp_str))
             tmp_str = hashlib.sha1(tmp_str.encode()).hexdigest()
@@ -47,7 +47,7 @@ class WeiXinMessageHandler(web.RequestHandler):
             if valid:
                 self.write(echostr)
             else:
-                self.write(config.success_response)
+                self.write(config.error_response)
         except Exception as e:
             logging.error(str(e))
             self.write(config.error_response)
