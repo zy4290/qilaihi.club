@@ -68,7 +68,7 @@ def send_custom_msg(msg, reply):
     url = custom_msg_url.format(config.accesstoken)
     logging.debug(url)
 
-    logging.debug(json_encode(custom_text))
+    logging.debug(json_encode(custom_text).decode())
     http_client = AsyncHTTPClient()
-    response = yield http_client.fetch(url, **{'method': 'POST', 'body': json_encode(custom_text)})
+    response = yield http_client.fetch(url, **{'method': 'POST', 'body': json_encode(custom_text).decode()})
     logging.debug(response.body.decode())
