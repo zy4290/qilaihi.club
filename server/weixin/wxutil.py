@@ -15,6 +15,8 @@ from weixin.config import access_token_url, custom_msg_url
 
 @gen.coroutine
 def refresh_access_token():
+    logging.info('开始刷新微信access token')
+
     db_util = dbutil.DBUtil()
     config = yield db_util.do(Config.select().get)
 
@@ -22,7 +24,7 @@ def refresh_access_token():
     logging.debug(access_token_url.format(config.appid, config.appsecret))
     response = yield http_client.fetch(
         access_token_url.format(config.appid, config.appsecret))
-    logging.debug(response.body.decode())
+    logging.info(response.body.decode())
     result = json.loads(response.body.decode())
     config.accesstoken = result['access_token']
     logging.debug(config.accesstoken)
