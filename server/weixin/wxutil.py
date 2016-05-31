@@ -28,13 +28,12 @@ def refresh_access_token():
     logging.debug(config.accesstoken)
     config.expires = result['expires_in']
     logging.debug(config.expires)
-    yield db_util.do(config.save)
+    yield DBUtil.do(config.save)
 
 
 @gen.coroutine
 def get_access_token():
-    db_util = dbutil.DBUtil()
-    config = yield db_util.do(Config.select().get)
+    config = yield DBUtil.do(Config.select().get)
     if config.accesstoken is not None:
         return config.accesstoken
     else:
