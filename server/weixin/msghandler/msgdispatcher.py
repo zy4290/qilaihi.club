@@ -36,24 +36,12 @@ class MsgDispatcher:
 
     @staticmethod
     @gen.coroutine
-    def process():
-        while True:
-            db_util = dbutil.DBUtil()
-            try:
-                # retrieve un-responded message
-                msg = yield db_util.do(WXMessage.select().order_by(WXMessage.createtime.asc()).limit(1).get)
-                if msg is None:
-                    continue
-                # respond accordingly
-                # TODO 需要根据消息处置，此处只是为了调试
-                yield wxutil.send_custom_msg(msg, '你发送的是: {0}'.format(msg.content))
-                msg.response = 1
-                msg.responsetime = datetime.datetime.now()
-                # stash msg
-                IOLoop.current().spawn_callback(MsgDispatcher._stash_msg, msg)
-            except Exception:
-                continue
-            finally:
-                yield gen.sleep(30)
-                # if not db_util.get_db().is_closed():
-                #    db_util.get_db().close()
+    def process(msg):
+        # respond accordingly
+        # TODO 需要根据消息处置，此处只是为了调试
+        yield wxutil.send_custom_msg(msg, '你发送的是: {0}'.format(msg.content))
+        msg.response = 1
+        msg.responsetime = datetime.datetime.now()
+        # stash msg
+        IOLoop.current().spawn_callback(MsgDispatcher._stash_msg, msg)
+

@@ -52,9 +52,7 @@ if __name__ == "__main__":
                             2399 * 1000
                             ).start()
 
-    # 每0.1秒取数据库未处理消息
     ioloop.IOLoop.current().run_sync(wxutil.refresh_access_token)
-    ioloop.IOLoop.current().spawn_callback(MsgDispatcher.process)
     logging.debug('server started.')
     ioloop.IOLoop.current().start()
 
