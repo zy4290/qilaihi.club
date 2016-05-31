@@ -70,5 +70,5 @@ def send_custom_msg(msg, reply):
 
     logging.debug(utf8(json_encode(custom_text)))
     http_client = AsyncHTTPClient()
-    response = yield http_client.fetch(url, **{'method': 'POST', 'body': utf8(json_encode(custom_text).decode())})
+    response = yield http_client.fetch(url, **{'method': 'POST', 'body': utf8(json_encode(custom_text))})
     logging.debug(response.body.decode())
