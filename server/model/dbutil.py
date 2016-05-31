@@ -23,15 +23,16 @@ class DBUtil:
 
     @staticmethod
     @gen.coroutine
-    def do(query):
+    def do(query, *args):
         try:
             db.connect()
-            result = yield ThreadPoolExecutor(1).submit(query)
+            if len(args) == 0:
+                result = query()
+            else:
+                result = query(args)
             return result
         finally:
             if not db.is_closed():
                 db.close()
             else:
                 logging.debug('db connection is closed.')
-
-
