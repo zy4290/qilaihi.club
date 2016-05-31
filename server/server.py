@@ -1,6 +1,8 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
+import logging
+
 from tornado import web, ioloop
 from tornado.options import define, options
 
@@ -41,14 +43,18 @@ if __name__ == "__main__":
         # 微信服务
         (r'/weixin', wxservice.WeiXinMessageHandler)
     ], **settings)
-    application.listen(options.port)
-    ioloop.IOLoop.current().start()
 
-    # 每0.1秒取数据库未处理消息
-    ioloop.IOLoop.current().spawn_callback(MsgDispatcher.process)
+    application.listen(options.port)
 
     # 每2399秒刷新access token
     # TODO 多实例部署时需要挪出去
     ioloop.PeriodicCallback(wxutil.refresh_access_token,
                             2399 * 1000
                             ).start()
+
+    # 每0.1秒取数据库未处理消息
+    ioloop.IOLoop.current().run_sync(wxutil.refresh_access_token)
+    ioloop.IOLoop.current().spawn_callback(MsgDispatcher.process)
+    logging.debug('server started.')
+    ioloop.IOLoop.current().start()
+
