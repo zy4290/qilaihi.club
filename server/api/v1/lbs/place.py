@@ -15,7 +15,5 @@ async def get(query, region):
         response = await http_client.fetch(url)
         logging.debug(response.body.decode())
         return response.body.decode()
-    except Exception as e:
-        raise e
     finally:
         http_client.close()
