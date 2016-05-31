@@ -31,5 +31,7 @@ class DBUtil:
         finally:
             if not db.is_closed():
                 db.close()
+            else:
+                logging.debug('db connection is closed.')
 
 
