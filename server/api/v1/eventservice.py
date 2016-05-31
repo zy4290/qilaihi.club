@@ -1,8 +1,8 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-import logging
 import json
+import logging
 
 from tornado import web, gen
 
@@ -11,11 +11,16 @@ from model.dbutil import DBUtil
 from model.event import Event
 
 
-class GetEventHandler(web.RequestHandler):
+class SearchEventByCodeHandler(web.RequestHandler):
 
     @staticmethod
     def query(code):
-        return Event.get(Event.code == code)
+        events = Event.select().where(Event.code == code).dicts()
+        result = {}
+        for event in events:
+            result = event
+            break
+        return json.dumps(result, ensure_ascii=False, indent=4)
 
     @gen.coroutine
     def post(self):
@@ -27,4 +32,8 @@ class GetEventHandler(web.RequestHandler):
             self.write(Response(status=1, msg='ok', result=response))
         except Exception as e:
             self.write(Response().json())
-            logging.exception('PlaceServiceHandler error: {0}'.format(str(e)))
+            logging.exception('GetEventHandler error: {0}'.format(str(e)))
+
+
+class CreateEventHandler(web.RequestHandler):
+    pass
