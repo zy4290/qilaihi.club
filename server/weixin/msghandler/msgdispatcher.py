@@ -54,6 +54,6 @@ class MsgDispatcher:
             except Exception:
                 continue
             finally:
-                yield gen.sleep(0.1)
+                yield gen.sleep(30)
                 # if not db_util.get_db().is_closed():
                 #    db_util.get_db().close()
