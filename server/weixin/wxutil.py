@@ -3,10 +3,9 @@
 
 import copy
 import logging
-from concurrent.futures import ThreadPoolExecutor
+import json
 
 from tornado import gen
-from tornado.escape import json_decode, json_encode, utf8
 from tornado.httpclient import AsyncHTTPClient
 
 from model import dbutil
@@ -24,7 +23,7 @@ def refresh_access_token():
     response = yield http_client.fetch(
         access_token_url.format(config.appid, config.appsecret))
     logging.debug(response.body.decode())
-    result = json_decode(response.body.decode())
+    result = json.loads(response.body.decode())
     config.accesstoken = result['access_token']
     logging.debug(config.accesstoken)
     config.expires = result['expires_in']
@@ -62,13 +61,15 @@ def send_custom_msg(msg, reply):
     custom_text = copy.deepcopy(_custom_text)
     custom_text['touser'] = msg.fromusername
     custom_text['text']['content'] = reply
+    logging.debug(custom_text)
 
     db_util = dbutil.DBUtil()
     config = yield db_util.do(Config.select().get)
     url = custom_msg_url.format(config.accesstoken)
     logging.debug(url)
 
-    logging.debug(utf8(json_encode(custom_text)))
+    logging.debug(json.dumps(custom_text, ensure_ascii=False, indent=4))
     http_client = AsyncHTTPClient()
-    response = yield http_client.fetch(url, **{'method': 'POST', 'body': utf8(json_encode(custom_text))})
+    response = yield http_client.fetch(url, **{'method': 'POST',
+                                               'body': json.dumps(custom_text, ensure_ascii=False)})
     logging.debug(response.body.decode())
