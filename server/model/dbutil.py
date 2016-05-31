@@ -2,7 +2,6 @@
 # coding: utf-8
 
 import logging
-from concurrent.futures import ThreadPoolExecutor
 
 from tornado import gen
 
