@@ -6,7 +6,7 @@ import logging
 
 from tornado import web, ioloop, gen
 
-from model import config
+from model.config import Config
 from model import dbutil
 from weixin import config
 from weixin.msghandler.msgparser import MsgParser
@@ -22,7 +22,7 @@ class WeiXinMessageHandler(web.RequestHandler):
                 'signature:{0} timestamp:{1} nonce:{2} echostr:{3}'.
                 format(signature, timestamp, nonce, echostr))
             db_util = dbutil.DBUtil()
-            _config = yield db_util.do(config.Config().select().get)
+            _config = yield db_util.do(Config().select().get)
             tmp_list = sorted([_config.accesstoken, timestamp, nonce])
             tmp_str = ''.join(tmp_list)
             logging.debug('before sha1: {0}'.format(tmp_str))
