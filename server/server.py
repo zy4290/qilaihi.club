@@ -6,7 +6,7 @@ import logging
 from tornado import web, ioloop
 from tornado.options import define, options
 
-from api.v1 import placeservice
+from api.v1 import lbsservice
 from route import page
 from weixin import wxservice
 
@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
         # HTTP API
         # 地址API
-        (r'/api/v1/place', placeservice.PlaceServiceHandler),
+        (r'/api/v1/place', lbsservice.PlaceServiceHandler),
         # (r'/api/v1/geocoding', None),
 
         # 活动API
