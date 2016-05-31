@@ -1,8 +1,7 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-import logging
-from concurrent.futures import ThreadPoolExecutor
+import logging, datetime
 
 from tornado import gen
 from tornado.ioloop import IOLoop
@@ -32,35 +31,29 @@ class MsgDispatcher:
             msgid=msg.msgid,
             msg=msg.msg
         )
-
-        try:
-            dbutil.get_db().connect()
-            yield ThreadPoolExecutor(1).submit(old_msg.save)
-        except Exception as e:
-            logging.error(str(e))
-        finally:
-            yield ThreadPoolExecutor(1).submit(msg.delete)
-            if not dbutil.get_db().is_closed():
-                dbutil.get_db().close()
+        yield [dbutil.DBUtil().do(old_msg.save), dbutil.DBUtil().do(msg.delete_instance)]
+        logging.debug('move msg to old.')
 
     @staticmethod
     @gen.coroutine
     def process():
         while True:
+            db_util = dbutil.DBUtil()
             try:
                 # retrieve un-responded message
-                msg = yield ThreadPoolExecutor(1).submit(
-                    WXMessage().select().order_by(WXMessage.createtime.asc()).get)
+                msg = yield db_util.do(WXMessage.select().order_by(WXMessage.createtime.asc()).limit(1).get)
                 if msg is None:
                     continue
-
                 # respond accordingly
                 # TODO 需要根据消息处置，此处只是为了调试
                 yield wxutil.send_custom_msg(msg, '你发送的是: {0}'.format(msg.content))
-
+                msg.response = 1
+                msg.responsetime = datetime.datetime.now()
                 # stash msg
-                IOLoop.current().spawn_callback(MsgDispatcher._stash_msg)
-            except Exception as e:
-                logging.error(str(e))
+                IOLoop.current().spawn_callback(MsgDispatcher._stash_msg, msg)
+            except Exception:
+                continue
             finally:
                 yield gen.sleep(0.1)
+                # if not db_util.get_db().is_closed():
+                #    db_util.get_db().close()

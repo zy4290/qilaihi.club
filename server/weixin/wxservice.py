@@ -4,9 +4,10 @@
 import hashlib
 import logging
 
-from tornado import web, ioloop
+from tornado import web, ioloop, gen
 
-from model.config import Config
+from model import config
+from model import dbutil
 from weixin import config
 from weixin.msghandler.msgparser import MsgParser
 
@@ -14,13 +15,15 @@ from weixin.msghandler.msgparser import MsgParser
 class WeiXinMessageHandler(web.RequestHandler):
 
     @staticmethod
+    @gen.coroutine
     def _validate(signature, timestamp, nonce, echostr):
         try:
             logging.debug(
                 'signature:{0} timestamp:{1} nonce:{2} echostr:{3}'.
                 format(signature, timestamp, nonce, echostr))
-            token = Config().select().get().access_token()
-            tmp_list = sorted([token, timestamp, nonce])
+            db_util = dbutil.DBUtil()
+            _config = yield db_util.do(config.Config().select().get)
+            tmp_list = sorted([_config.accesstoken, timestamp, nonce])
             tmp_str = ''.join(tmp_list)
             logging.debug('before sha1: {0}'.format(tmp_str))
             tmp_str = hashlib.sha1(tmp_str.encode()).hexdigest()
@@ -33,13 +36,14 @@ class WeiXinMessageHandler(web.RequestHandler):
             logging.error(str(e))
             return False
 
+    @gen.coroutine
     def get(self):
         try:
             signature = self.get_argument('signature')
             timestamp = self.get_argument('timestamp')
             nonce = self.get_argument('nonce')
             echostr = self.get_argument('echostr')
-            valid = WeiXinMessageHandler._validate(signature, timestamp, nonce, echostr)
+            valid = yield WeiXinMessageHandler._validate(signature, timestamp, nonce, echostr)
             if valid:
                 self.write(echostr)
             else:
@@ -48,6 +52,7 @@ class WeiXinMessageHandler(web.RequestHandler):
             logging.error(str(e))
             self.write(config.error_response)
 
+    @gen.coroutine
     def post(self):
         try:
             xml = self.request.body.decode()

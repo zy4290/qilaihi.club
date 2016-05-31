@@ -6,7 +6,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 
 from tornado import gen
-from tornado.escape import json_decode
+from tornado.escape import json_decode, json_encode
 from tornado.httpclient import AsyncHTTPClient
 
 from model import dbutil
@@ -16,28 +16,26 @@ from weixin.config import access_token_url, custom_msg_url
 
 @gen.coroutine
 def refresh_access_token():
-    config = yield ThreadPoolExecutor(1).submit(Config().select().get())
-    try:
-        http_client = AsyncHTTPClient()
-        logging.debug(access_token_url.format(config.appid, config.appsecret))
-        response = yield http_client.fetch(
-            access_token_url.format(config.appid, config.appsecret))
-        logging.debug(response.body.decode())
-        result = json_decode(response.body.decode)
-        config.accesstoken = result['access_token']
-        config.expires = result['expires_in']
-        dbutil.get_db().connect()
-        yield ThreadPoolExecutor(1).submit(config.save())
-    except Exception as e:
-        raise e
-    finally:
-        if not dbutil.get_db().is_closed():
-            dbutil.get_db().close()
+    db_util = dbutil.DBUtil()
+    config = yield db_util.do(Config.select().get)
+
+    http_client = AsyncHTTPClient()
+    logging.debug(access_token_url.format(config.appid, config.appsecret))
+    response = yield http_client.fetch(
+        access_token_url.format(config.appid, config.appsecret))
+    logging.debug(response.body.decode())
+    result = json_decode(response.body.decode())
+    config.accesstoken = result['access_token']
+    logging.debug(config.accesstoken)
+    config.expires = result['expires_in']
+    logging.debug(config.expires)
+    yield db_util.do(config.save)
 
 
 @gen.coroutine
 def get_access_token():
-    config = Config().select().get()
+    db_util = dbutil.DBUtil()
+    config = yield db_util.do(Config.select().get)
     if config.accesstoken is not None:
         return config.accesstoken
     else:
@@ -65,16 +63,11 @@ def send_custom_msg(msg, reply):
     custom_text['touser'] = msg.fromusername
     custom_text['text']['content'] = reply
 
-    url = ''
-    try:
-        dbutil.get_db().connect()
-        config = yield ThreadPoolExecutor(1).submit(Config().select().get)
-        url = custom_msg_url.format(config.accesstoken)
-    except Exception as e:
-        logging.error(str(e))
-    finally:
-        if not dbutil.get_db().is_closed():
-            dbutil.get_db().close()
+    db_util = dbutil.DBUtil()
+    config = yield db_util.do(Config.select().get)
+    url = custom_msg_url.format(config.accesstoken)
+    logging.debug(url)
 
     http_client = AsyncHTTPClient()
-    yield http_client.fetch(url, **{'body': custom_text})
+    response = yield http_client.fetch(url, **{'method': 'POST', 'body': json_encode(custom_text)})
+    logging.debug(response.body.decode())
