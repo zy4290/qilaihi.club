@@ -6,7 +6,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 
 from tornado import gen
-from tornado.escape import json_decode, json_encode
+from tornado.escape import json_decode, json_encode, utf8
 from tornado.httpclient import AsyncHTTPClient
 
 from model import dbutil
@@ -68,7 +68,7 @@ def send_custom_msg(msg, reply):
     url = custom_msg_url.format(config.accesstoken)
     logging.debug(url)
 
-    logging.debug(json_encode(custom_text).decode())
+    logging.debug(utf8(json_encode(custom_text)))
     http_client = AsyncHTTPClient()
-    response = yield http_client.fetch(url, **{'method': 'POST', 'body': json_encode(custom_text).decode()})
+    response = yield http_client.fetch(url, **{'method': 'POST', 'body': utf8(json_encode(custom_text).decode())})
     logging.debug(response.body.decode())
