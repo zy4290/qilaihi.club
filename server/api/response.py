@@ -1,7 +1,7 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-from tornado.escape import json_encode
+import json
 
 
 class Response:
@@ -19,4 +19,4 @@ class Response:
         }
 
     def json(self):
-        return json_encode(self.dict())
+        return json.dumps(self.dict(), ensure_ascii=False, indent=4)
