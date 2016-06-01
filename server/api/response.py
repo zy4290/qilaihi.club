@@ -5,8 +5,7 @@ import json
 
 
 class Response:
-
-    def __init__(self, status=-1, msg='error', result={}):
+    def __init__(self, status=-1, msg='sorry，亲，服务出错啦', result=None):
         self.status = status
         self.msg = msg
         self.result = result
