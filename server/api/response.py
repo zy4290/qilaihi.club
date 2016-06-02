@@ -10,6 +10,13 @@ class Response:
         self.msg = msg
         self.result = result
 
+    @staticmethod
+    def _handler(_datetime):
+        if hasattr(_datetime, 'isoformat'):
+            return _datetime.isoformat()
+        else:
+            raise TypeError
+
     def dict(self):
         return {
             'status': self.status,
@@ -18,4 +25,9 @@ class Response:
         }
 
     def json(self):
-        return json.dumps(self.dict(), ensure_ascii=False, indent=4)
+        return json.dumps(
+            self.dict(),
+            default=self._handler,
+            ensure_ascii=False,
+            indent=4
+        )
