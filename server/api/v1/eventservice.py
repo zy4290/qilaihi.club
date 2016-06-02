@@ -5,6 +5,8 @@ import datetime
 import json
 import logging
 
+import peewee
+from playhouse.shortcuts import dict_to_model, model_to_dict
 from tornado import web, gen
 
 from api.response import Response
@@ -12,15 +14,15 @@ from model.dbutil import DBUtil
 from model.event import Event
 
 
-class SearchEventByCodeHandler(web.RequestHandler):
+class GetEventHandler(web.RequestHandler):  # 按番号查询活动
 
     @staticmethod
     def query(code):
-        events = Event.select().where(Event.code == code).dicts()
-        result = {}
-        for event in events:
-            result = event
-            break
+        try:
+            event = Event.get(Event.code == code)
+            result = model_to_dict(event)
+        except peewee.DoesNotExist:
+            result = {}
         return result
 
     @gen.coroutine
@@ -38,38 +40,50 @@ class SearchEventByCodeHandler(web.RequestHandler):
             else:
                 self.write(Response(
                     status=1, msg='ok',
-                    result=json.dumps(result, ensure_ascii=False, indent=4)
+                    result=result
                 ).json())
         except Exception as e:
-            self.write(Response().json())
+            self.write(Response(msg='sorry，亲，查询活动失败').json())
             logging.exception('GetEventHandler error: {0}'.format(str(e)))
 
 
-class CreateEventHandler(web.RequestHandler):
+class PublishEventHandler(web.RequestHandler):  # 创建活动
+
     @gen.coroutine
     def post(self):
         try:
-            request = json.loads(self.request.body.decode())
-            event = Event(
-                code=request.get('code', None),
-                status=0,
-                logoimgurl=request.get('logoimgurl', None),
-                title=request.get('title', None),
-                time=request.get('time', None),
-                aacost=request.get('aacost', None),
-                tag=request.get('tag', None),
-                agerange=request.get('agerange', None),
-                location=request.get('location', None),
-                latitude=request.get('latitude', None),
-                longtitude=request.get('longtitude', None),
-                createtime=datetime.datetime.now(),
-                organizaerid=request.get('organizaerid', None)
-            )
-            yield DBUtil.do(event.save)
+            data = json.loads(self.request.body.decode())
+            logging.debug(data)
+            event = dict_to_model(Event, data)
+            event.createtime = datetime.datetime.now()
+            result = yield DBUtil.do(event.save)
+            assert result == 1
             self.write(Response(
                 status=1, msg='恭喜你，活动发布成功！',
-                result=None
+                result={}
             ).json())
         except Exception as e:
-            self.write(Response().json())
+            self.write(Response(msg='sorry，亲，活动发布失败').json())
+            logging.exception('CreateEventHandler error: {0}'.format(str(e)))
+
+
+class ListEventHandler(web.RequestHandler):  # 分页查询活动列表
+
+    @gen.coroutine
+    def post(self):
+        try:
+            data = json.loads(self.request.body.decode())
+            # 默认查询第一页
+            page_number = data.get('page_number', 1)
+            # 默认每页显示4条数据
+            items_per_page = data.get('items_per_page', 4)
+            query = yield DBUtil.do(
+                Event.select().order_by(-Event.createtime).paginate(
+                    page_number, items_per_page).dicts)
+            result = []
+            for event in query:
+                result.append(event)
+            self.write(Response(status=1, msg='ok', result=result).json())
+        except Exception as e:
+            self.write(Response(msg='sorry，亲，活动查询失败').json())
             logging.exception('CreateEventHandler error: {0}'.format(str(e)))
