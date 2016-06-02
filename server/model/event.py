@@ -20,14 +20,13 @@ class Event(basemodel.BaseModel):
     expectsignups = IntegerField(null=True)
     agerange = IntegerField(null=True)
     location = CharField(null=True)
-    address = CharField(null=True)
     latitude = CharField(null=True)
-    longtitude = CharField(null=True)
+    longitude = CharField(null=True)
     likecount = IntegerField(null=True)
     dislikecount = IntegerField(null=True)
     createtime = DateTimeField(null=True)
     updatetime = DateTimeField(null=True)
-    organizaerid = IntegerField(null=True)
+    organizerid = IntegerField(null=True)
 
     class Meta:
         db_table = 'event'
