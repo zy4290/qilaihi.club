@@ -9,7 +9,7 @@ from model import basemodel
 class Event(basemodel.BaseModel):
     code = CharField(unique=True)
     status = IntegerField(null=True)
-    logoimgurl = CharField(null=True)
+    imgurls = TextField(null=True)
     title = CharField(null=True)
     viewcount = IntegerField(null=True)
     focuscount = IntegerField(null=True)
@@ -20,6 +20,8 @@ class Event(basemodel.BaseModel):
     expectsignups = IntegerField(null=True)
     agerange = IntegerField(null=True)
     location = CharField(null=True)
+    address = CharField(null=True)
+    telephone = CharField(null=True)
     latitude = CharField(null=True)
     longitude = CharField(null=True)
     likecount = IntegerField(null=True)
