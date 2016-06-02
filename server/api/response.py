@@ -11,9 +11,9 @@ class Response:
         self.result = result
 
     @staticmethod
-    def _handler(_datetime):
-        if hasattr(_datetime, 'isoformat'):
-            return _datetime.isoformat()
+    def _handler(_data):
+        if hasattr(_data, 'isoformat'):
+            return _data.isoformat()
         else:
             raise TypeError
 
