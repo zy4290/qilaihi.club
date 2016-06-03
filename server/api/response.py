@@ -11,9 +11,9 @@ class Response:
         self.result = result
 
     @staticmethod
-    def _handler(_data):
-        if hasattr(_data, 'isoformat'):
-            return _data.isoformat()
+    def handler(data):
+        if hasattr(data, 'isoformat'):
+            return data.isoformat()
         else:
             raise TypeError
 
@@ -27,7 +27,8 @@ class Response:
     def json(self):
         return json.dumps(
             self.dict(),
-            default=self._handler,
+            default=self.handler,
             ensure_ascii=False,
             indent=4
         )
+
