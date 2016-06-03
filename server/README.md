@@ -39,49 +39,58 @@
 ```
 注：status=1则服务正常，status=-1则服务异常
 ### 1. 地理位置服务接口
-#### 1.1 place 检索地理位置信息
-```
+#### 1.1 地理位置搜索
 接口地址:
+```
     http://qilaihi.me/api/v1/place/query
+```
 请求数据示例:
+```
     {
         "query":"东亭新嘉源",
         "region":"武汉"
     }
+```
 说明:
+```
     region为城市名称
 ```
 #### 2. event
-##### 2.1 list 
-分页查询活动
-```
+##### 2.1 分页查询活动 
 接口地址:
+```
     http://qilaihi.me/api/v1/event/list
+```
 请求数据示例:
+```
     {
         "page_number":1,
         "items_per_page":8
     }
+```
 说明：
+```
     page_number从1开始
     请求数据可为{}，则默认第1页，每页4条数据
 ```
-#### 2.2 get 
-按番号查询活动
-```
+#### 2.2 按番号查询活动 
 接口地址:
+```
     http://qilaihi.me/api/v1/event/get
+```
 请求数据示例:
+```
     {
         "code":"大王派我来巡山"
     }
 ```
-#### 2.3 publish 
-发布活动
-```
+#### 2.3 发布活动 
 接口地址：
+```
     http://qilaihi.me/api/v1/event/publish
+```
 数据结构：
+```
     Table: event
     Columns:
     id	int(11) AI PK
