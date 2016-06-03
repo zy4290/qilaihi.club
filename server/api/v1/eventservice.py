@@ -80,9 +80,7 @@ class ListEventHandler(web.RequestHandler):  # 分页查询活动列表
             query = yield DBUtil.do(
                 Event.select().order_by(-Event.createtime).paginate(
                     page_number, items_per_page).dicts)
-            result = []
-            for event in query:
-                result.append(event)
+            result = [event for event in query]
             self.write(Response(status=1, msg='ok', result=result).json())
         except Exception as e:
             self.write(Response(msg='sorry，亲，活动查询失败').json())
