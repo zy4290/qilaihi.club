@@ -10,12 +10,6 @@ class DefaultHandler(web.RequestHandler):
 
     def write_error(self, status_code, **kwargs):
         self.set_status(status_code)
-        if status_code == 404:
-            self.write('404 - Page Not Found')
-        elif status_code == 500:
-            self.write('500 - Internal Server Error')
-        else:
-            self.write(status_code)
 
 
 class HomePageHandler(web.RequestHandler):
