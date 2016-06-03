@@ -9,6 +9,7 @@ from tornado.options import define, options
 from api.v1.eventservice import ListEventHandler, PublishEventHandler, GetEventHandler
 from api.v1.lbsservice import PlaceServiceHandler
 from weixin import wxservice
+from route import page
 
 define('port', 80, type=int)
 define('debug', True, type=bool)
@@ -37,7 +38,11 @@ if __name__ == "__main__":
         (r'/api/v1/event/get', GetEventHandler),
 
         # 微信服务入口
-        (r'/weixin', wxservice.WeiXinMessageHandler)
+        (r'/weixin', wxservice.WeiXinMessageHandler),
+
+        # 异常处理
+        (r'/.*', page.DefaultHandler)
+
     ], **settings)
 
     application.listen(options.port)
