@@ -11,7 +11,7 @@ from api.v1.lbsservice import PlaceServiceHandler
 from weixin import wxservice
 from route import page
 
-define('port', 80, type=int)
+define('port', 8080, type=int)
 define('debug', True, type=bool)
 define('autoreload', True, type=bool)
 
