@@ -1,16 +1,19 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-import copy, logging, json, datetime
+import copy
+import datetime
+import json
+import logging
 
+from peewee import DoesNotExist
+from playhouse.shortcuts import dict_to_model, model_to_dict
 from tornado import gen
 from tornado.httpclient import AsyncHTTPClient
 
-from playhouse.shortcuts import dict_to_model
-
+from model.config import Config
 from model.dbutil import DBUtil
 from model.user import User
-from model.config import Config
 from weixin import config as wxconfig
 
 
@@ -46,13 +49,13 @@ def refresh_jsapi_ticket(access_token):
 
 @gen.coroutine
 def get_access_token():
-    config = yield DBUtil.do(Config.select().get)
+    config = yield DBUtil.do(Config.get)
     return config.accesstoken
 
 
 @gen.coroutine
 def get_jsapi_ticket():
-    config = yield DBUtil.do(Config.select().get)
+    config = yield DBUtil.do(Config.get)
     return config.jsapiticket
 
 
@@ -78,6 +81,7 @@ def send_custom_msg(msg, reply):
                                                'body': json.dumps(custom_text, ensure_ascii=False)})
     logging.debug(response.body.decode())
 
+
 @gen.coroutine
 def get_oauth2_access_code(code):
     if code:
@@ -90,7 +94,8 @@ def get_oauth2_access_code(code):
     http_client = AsyncHTTPClient()
     response = yield http_client.fetch(oauth2_url)
     logging.debug(response.body.decode())
-    return response.body.decode()
+    return json.loads(response.body.decode())
+
 
 @gen.coroutine
 def refresh_oauth2_access_code(refresh_token):
@@ -103,7 +108,8 @@ def refresh_oauth2_access_code(refresh_token):
     http_client = AsyncHTTPClient()
     response = yield http_client.fetch(oauth2_refresh_url)
     logging.debug(response.body.decode())
-    return response.body.decode()
+    return json.loads(response.body.decode())
+
 
 @gen.coroutine
 def validate_oauth2_access_code(web_access_token, openid):
@@ -114,16 +120,36 @@ def validate_oauth2_access_code(web_access_token, openid):
     http_client = AsyncHTTPClient()
     response = yield http_client.fetch(validate_url)
     logging.debug(response.body.decode())
-    return response.body.decode()
+    return json.loads(response.body.decode())
+
 
 @gen.coroutine
-def pull_user_info(web_access_token, openid):
-    pull_user_info_url = wxconfig.pull_user_info_url.format(web_access_token, openid)
-    http_client = AsyncHTTPClient()
-    response = yield http_client.fetch(pull_user_info_url)
-    logging.debug(response.body.decode())
-    user_dict = json.loads(response.body.decode())
-    new_user = dict_to_model(User, user_dict, ignore_unknown=True)
-    new_user.createtime = datetime.datetime.now()
-    DBUtil.do(new_user.save)
-    return response.body.decode()
+def pull_user_info(openid, web_access_token=None):
+    if web_access_token:
+        pull_user_info_url = wxconfig.pull_user_info_url.format(web_access_token, openid)
+        http_client = AsyncHTTPClient()
+        response = yield http_client.fetch(pull_user_info_url)
+        logging.debug(response.body.decode())
+        user_dict = json.loads(response.body.decode())
+        user = dict_to_model(User, user_dict, ignore_unknown=True)
+    else:
+        user = User(openid='openid')
+
+    user_id = None
+    try:
+        _user = DBUtil.do(User.get, User.openid == openid)
+        user_id = _user.get_id()
+        exists = True
+    except DoesNotExist:
+        exists = False
+
+    if exists:
+        assert user_id
+        user.set_id(user_id)
+        user.updatetime = datetime.datetime.now()
+    else:
+        user.createtime = datetime.datetime.now()
+    yield DBUtil.do(user.save)
+    user = yield DBUtil.do(User.get, User.openid == openid)
+
+    return model_to_dict(user)
