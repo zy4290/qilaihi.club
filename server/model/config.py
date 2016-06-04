@@ -14,6 +14,7 @@ class Config(basemodel.BaseModel):
     token = CharField(null=True)
     encodingaeskey = CharField(null=True)
     baiduak = CharField(null=True)
+    jsapiticket = CharField(null=True)
 
     class Meta:
         db_table = 'config'

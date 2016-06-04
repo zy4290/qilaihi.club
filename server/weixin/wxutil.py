@@ -26,20 +26,34 @@ def refresh_access_token():
     logging.info(response.body.decode())
     result = json.loads(response.body.decode())
     config.accesstoken = result['access_token']
-    logging.debug(config.accesstoken)
+    config.jsapiticket = yield refresh_jsapi_ticket(config.accesstoken)
     config.expires = result['expires_in']
+    logging.debug(config.accesstoken)
+    logging.debug(config.jsapiticket)
     logging.debug(config.expires)
     yield DBUtil.do(config.save)
 
 
 @gen.coroutine
+def refresh_jsapi_ticket(access_token):
+    get_jsapi_ticket_url = wxconfig.jsapi_ticket_url.format(access_token)
+    http_client = AsyncHTTPClient()
+    response = yield http_client.fetch(get_jsapi_ticket_url)
+    logging.debug(response.body.decode())
+    result = json.loads(response.body.decode())
+    return result.get('ticket', None)
+
+
+@gen.coroutine
 def get_access_token():
     config = yield DBUtil.do(Config.select().get)
-    if config.accesstoken is not None:
-        return config.accesstoken
-    else:
-        access_token = yield refresh_access_token()
-        return access_token
+    return config.accesstoken
+
+
+@gen.coroutine
+def get_jsapi_ticket():
+    config = yield DBUtil.do(Config.select().get)
+    return config.jsapiticket
 
 
 def send_template_msg():
@@ -92,19 +106,19 @@ def refresh_oauth2_access_code(refresh_token):
     return response.body.decode()
 
 @gen.coroutine
-def validate_oauth2_access_code(access_token, openid):
+def validate_oauth2_access_code(web_access_token, openid):
     if refresh_access_token or openid:
         return '{}'
 
-    validate_url = wxconfig.validate_oauth2_access_token_url.format(access_token, openid)
+    validate_url = wxconfig.validate_oauth2_access_token_url.format(web_access_token, openid)
     http_client = AsyncHTTPClient()
     response = yield http_client.fetch(validate_url)
     logging.debug(response.body.decode())
     return response.body.decode()
 
 @gen.coroutine
-def pull_user_info(access_token, openid):
-    pull_user_info_url = wxconfig.pull_user_info_url.format(access_token, openid)
+def pull_user_info(web_access_token, openid):
+    pull_user_info_url = wxconfig.pull_user_info_url.format(web_access_token, openid)
     http_client = AsyncHTTPClient()
     response = yield http_client.fetch(pull_user_info_url)
     logging.debug(response.body.decode())
