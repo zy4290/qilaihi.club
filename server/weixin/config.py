@@ -13,6 +13,9 @@ oauth2_access_token_refresh_url = 'https://api.weixin.qq.com/sns/oauth2/refresh_
 validate_oauth2_access_token_url = 'https://api.weixin.qq.com/sns/auth' + \
                                    '?access_token={0}&openid={1}'
 
+jsapi_ticket_url = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket' + \
+                   '?access_token={0}&type=jsapi'
+
 pull_user_info_url = 'https://api.weixin.qq.com/sns/userinfo?' + \
                      'access_token={0}&openid={1}&lang=zh_CN'
 
