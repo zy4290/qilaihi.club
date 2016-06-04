@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import logging
+from concurrent.futures import ThreadPoolExecutor
 
 from tornado import gen
 
@@ -13,6 +14,7 @@ db = __param__.db(
     host=__param__.ip, port=__param__.port, user=__param__.user,
     password=__param__.password, charset=__param__.charset)
 
+executor = ThreadPoolExecutor(max_workers=__param__.max_connection)
 
 class DBUtil:
 
@@ -21,17 +23,21 @@ class DBUtil:
         return db
 
     @staticmethod
-    @gen.coroutine
-    def do(query, *args):
+    def _do(query, expr=None):
         try:
             db.connect()
-            if len(args) == 0:
-                result = query()
+            if expr:
+                return query(expr)
             else:
-                result = query(args)
-            return result
+                return query()
         finally:
             if not db.is_closed():
                 db.close()
             else:
-                logging.debug('db connection is closed.')
+                logging.warning('db connection is closed.')
+
+    @staticmethod
+    @gen.coroutine
+    def do(query, expr=None):
+        result = yield executor.submit(DBUtil._do, *(query, expr))
+        return result
