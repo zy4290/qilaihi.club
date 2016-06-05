@@ -1,5 +1,14 @@
 # qilaihi.me server
 
+## TODO
+* 发送微信模板消息
+* 同步微信多媒体文件到阿里云
+* 解析微信location事件,更新用户地址
+* 设计实现微信文字IVR
+* “活动”页面API
+* “足迹”页面API
+* “我的”页面API
+
 ## 依赖
     Python 3.5.1+
     
@@ -73,7 +82,7 @@
     page_number从1开始
     请求数据可为{}，则默认第1页，每页4条数据
 ```
-#### 2.2 按番号查询活动 
+##### 2.2 按番号查询活动 
 接口地址:
 ```
     http://qilaihi.me/api/v1/event/get
@@ -84,38 +93,65 @@
         "code":"大王派我来巡山"
     }
 ```
-#### 2.3 发布活动 
+##### 2.3 发布活动 
 接口地址：
 ```
     http://qilaihi.me/api/v1/event/publish
 ```
-数据结构：
+请求数据示例：
 ```
-    Table: event
-    Columns:
-    id	int(11) AI PK
-    code	varchar(10)
-    status	int(1)
-    imgurls	text
-    title	varchar(200)
-    viewcount	int(11)
-    focuscount	int(11)
-    time	datetime
-    aacost	int(11)
-    tag	varchar(5)
-    singupcount	int(11)
-    expectsignups	int(11)
-    agerange	int(1)
-    telephone	varchar(100)
-    location	varchar(500)
-    address	varchar(2000)
-    latitude	varchar(100)
-    longitude	varchar(100)
-    likecount	int(11)
-    dislikecount	int(11)
-    createtime	datetime
-    updatetime	datetime
-    organizerid	int(11)
+    {
+        "code":"唯一的番号",
+        "mediaids":["media_id1", "media_id2", ...]
+        "title":"活动简介"
+        "time":"YYYY-MM-DD HH:mm:ss"
+        "aacost":68
+        "tag":"户外"
+        "expectsignups":4
+        "agerange":3
+        "location":"东湖风景区"
+        "address":"湖北省武汉市武昌区"
+        "latitude":"30.575504"
+        "longitude":"114.379627"
+        "organizerid":"o-7des8JLh-sCql5MZ2_oSLImxdc"
+    }
 ```
+#### 3. 微信JS SDK
+##### 3.1 拉取用户信息
+接口地址：
+```
+    http://qilaihi.me/api/v1/wxweb/user/get
+```
+请求数据示例：
+```
+    {
+        "code":"callback_url_code"
+        "scope":"snsapi_userinfo", // 默认为snsapi_base，仅获取openid
+    }
+```
+##### 3.1 拉取用户信息
+接口地址：
+```
+    http://qilaihi.me/api/v1/wxweb/user/get
+```
+请求数据示例：
+```
+    {
+        "code":"callback_url_code"
+        "scope":"snsapi_userinfo", // 默认为snsapi_base，仅获取openid
+    }
+```
+##### 3.2 URL签名
+接口地址：
+```
+    http://qilaihi.me/api/v1/wxweb/url/sign
+```
+请求数据示例：
+```
+    {
+        "url":"http://qilaihi.me/event?code=上山打老虎" // 该url不需要urlencode，微信所附加的#号及后面的内容需要移除
+    }
+```
+
 
 
