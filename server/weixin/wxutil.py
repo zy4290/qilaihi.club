@@ -5,6 +5,7 @@ import copy
 import datetime
 import json
 import logging
+import os.path
 
 from peewee import DoesNotExist
 from playhouse.shortcuts import dict_to_model, model_to_dict
@@ -153,3 +154,23 @@ def pull_user_info(openid, web_access_token=None):
     user = yield DBUtil.do(User.get, User.openid == openid)
 
     return model_to_dict(user)
+
+
+@gen.coroutine
+def download_temp_resource(media_id, path=None):
+    config = yield DBUtil.do(Config.get)
+    url = wxconfig.temp_resource_download_url.format(config.accesstoken, media_id)
+    http_client = AsyncHTTPClient()
+    response = yield http_client.fetch(url)
+    logging.debug(response.headers['Content-disposition'])
+    logging.debug(response.headers['Date'])
+    filename = response.headers['Content-disposition'][len('attachment; filename="'):-1]
+    logging.debug(filename)
+    if path is None:
+        with open(filename, mode='wb') as file:
+            file.write(response.body)
+    else:
+        if path[-1] != os.path.sep:
+            path += os.path.sep
+        with open(path + filename, mode='wb') as file:
+            file.write(response.body)
