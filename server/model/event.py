@@ -9,7 +9,9 @@ from model import basemodel
 class Event(basemodel.BaseModel):
     code = CharField(unique=True)
     status = IntegerField(null=True)
+    mediaids = TextField(null=True)
     imgurls = TextField(null=True)
+    mediasyncstatus = IntegerField(null=True)
     title = CharField(null=True)
     viewcount = IntegerField(null=True)
     focuscount = IntegerField(null=True)
