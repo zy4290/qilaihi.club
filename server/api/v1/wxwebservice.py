@@ -43,7 +43,7 @@ class GetUserInfoHandler(web.RequestHandler):
 
 class SignatureHandler(web.RequestHandler):
     @staticmethod
-    def randomStr(len=16):
+    def random_str(len=16):
         elements = list(string.ascii_letters + string.digits)
         random.shuffle(elements)
         return ''.join(elements[:len])
@@ -56,7 +56,7 @@ class SignatureHandler(web.RequestHandler):
             if url.find('#') != -1:
                 url = url[0:url.index('#')]
             jsapi_ticket = yield wxutil.get_jsapi_ticket()
-            noncestr = self.randomStr()
+            noncestr = self.random_str()
             timestamp = int(time.time())
             param = {
                 'url': url,
@@ -75,5 +75,5 @@ class SignatureHandler(web.RequestHandler):
                 result=param
             ).json())
         except Exception as e:
-            self.write(Response(msg='sorry，亲，获取用户信息失败').json())
+            self.write(Response(msg='sorry，亲，js api签名失败').json())
             logging.exception('GetUserInfoHandler error: {0}'.format(str(e)))
