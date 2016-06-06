@@ -60,10 +60,29 @@ def get_jsapi_ticket():
     return config.jsapiticket
 
 
-def send_template_msg():
-    # TODO 发送模板消息待完成
-    pass
-
+@gen.coroutine
+def send_template_msg(templatemsg):
+    if templatemsg is None: return
+    config = yield DBUtil.do(Config.get)
+    url = wxconfig.custom_msg_url.format(config.accesstoken)
+    data = {
+        'touser': templatemsg.touser,
+        'template_id': templatemsg.templateid,
+        'url': templatemsg.url,
+        'data': json.loads(templatemsg.data)
+    }
+    http_client = AsyncHTTPClient()
+    response = yield http_client.fetch(url, **{'method': 'POST',
+                                               'body': json.dumps(data, ensure_ascii=False)})
+    result = json.loads(response.body.decode())
+    errcode = result['errcode']
+    if errcode == 0:
+        templatemsg.msgid = result['msgid']
+        templatemsg.updatetime = datetime.datetime.now()
+        yield DBUtil.do(templatemsg.save)
+    else:
+        # TODO xxxx
+        pass
 
 @gen.coroutine
 def send_custom_msg(msg, reply):
