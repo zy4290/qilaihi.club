@@ -6,7 +6,7 @@ from peewee import *
 from model import basemodel
 
 
-class CustomWXmsgTask(basemodel):
+class TemplatemsgTask(basemodel):
     createtime = DateTimeField(null=True)
     data = TextField(null=True)
     status = IntegerField(null=True)
@@ -14,6 +14,7 @@ class CustomWXmsgTask(basemodel):
     touser = CharField(null=True)
     updatetime = DateTimeField(null=True)
     url = CharField(null=True)
+    msgid = CharField(null=True)
 
     class Meta:
         db_table = 'customwxmsgtask'
