@@ -14,6 +14,8 @@ from tornado.httpclient import AsyncHTTPClient
 
 from model.config import Config
 from model.dbutil import DBUtil
+from model.oldtemplatemsgtask import OldTemplatemsgTask
+from model.templatemsgtask import TemplatemsgTask
 from model.user import User
 from weixin import config as wxconfig
 
@@ -21,21 +23,23 @@ from weixin import config as wxconfig
 @gen.coroutine
 def refresh_access_token():
     logging.info('开始刷新微信access token')
-    config = yield DBUtil.do(Config.select().get)
-
-    http_client = AsyncHTTPClient()
-    logging.debug(wxconfig.access_token_url.format(config.appid, config.appsecret))
-    response = yield http_client.fetch(
-        wxconfig.access_token_url.format(config.appid, config.appsecret))
-    logging.info(response.body.decode())
-    result = json.loads(response.body.decode())
-    config.accesstoken = result['access_token']
-    config.jsapiticket = yield refresh_jsapi_ticket(config.accesstoken)
-    config.expires = result['expires_in']
-    logging.debug(config.accesstoken)
-    logging.debug(config.jsapiticket)
-    logging.debug(config.expires)
-    yield DBUtil.do(config.save)
+    try:
+        config = yield DBUtil.do(Config.select().get)
+        http_client = AsyncHTTPClient()
+        logging.debug(wxconfig.access_token_url.format(config.appid, config.appsecret))
+        response = yield http_client.fetch(
+            wxconfig.access_token_url.format(config.appid, config.appsecret))
+        logging.info(response.body.decode())
+        result = json.loads(response.body.decode())
+        config.accesstoken = result['access_token']
+        config.jsapiticket = yield refresh_jsapi_ticket(config.accesstoken)
+        config.expires = result['expires_in']
+        logging.debug(config.accesstoken)
+        logging.debug(config.jsapiticket)
+        logging.debug(config.expires)
+        yield DBUtil.do(config.save)
+    except Exception:
+        pass
 
 
 @gen.coroutine
@@ -62,7 +66,9 @@ def get_jsapi_ticket():
 
 @gen.coroutine
 def send_template_msg(templatemsg):
-    if templatemsg is None: return
+    if not isinstance(templatemsg, TemplatemsgTask) or templatemsg is None: return
+    logging.info('wxutil.send_template_msg - 开始发送模板消息：{0}'.format(
+        model_to_dict(templatemsg)))
     config = yield DBUtil.do(Config.get)
     url = wxconfig.custom_msg_url.format(config.accesstoken)
     data = {
@@ -79,10 +85,12 @@ def send_template_msg(templatemsg):
     if errcode == 0:
         templatemsg.msgid = result['msgid']
         templatemsg.updatetime = datetime.datetime.now()
-        yield DBUtil.do(templatemsg.save)
+        oldmsg = dict_to_model(OldTemplatemsgTask, model_to_dict(templatemsg))
+        yield [DBUtil.do(oldmsg.save), DBUtil.do(templatemsg.delete_instance)]
     else:
-        # TODO xxxx
-        pass
+        raise RuntimeError('wxutil.send_template_msg-发送模板消息失败，消息内容：{0}'.format(
+            model_to_dict(templatemsg)))
+
 
 @gen.coroutine
 def send_custom_msg(msg, reply):
