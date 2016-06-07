@@ -1,9 +1,10 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-import logging
 import datetime
+import logging
 
+from playhouse import shortcuts
 from tornado import gen
 from tornado.ioloop import IOLoop
 
@@ -20,18 +21,7 @@ class MsgDispatcher:
     def _stash_msg(msg):
         if not isinstance(msg, WXMessage) or msg is None:
             return
-        old_msg = Oldwxmessage(
-            content=msg.content,
-            tousername=msg.tousername,
-            fromusername=msg.fromusername,
-            createtime=msg.createtime,
-            msgtype=msg.msgtype,
-            event=msg.event,
-            response=msg.response,
-            responsetime=msg.responsetime,
-            msgid=msg.msgid,
-            msg=msg.msg
-        )
+        old_msg = shortcuts.dict_to_model(Oldwxmessage, shortcuts.model_to_dict(msg))
         yield [DBUtil.do(old_msg.save), DBUtil.do(msg.delete_instance)]
         logging.debug('move msg to old.')
 
