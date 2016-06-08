@@ -22,6 +22,8 @@ def get(query, region):
         result = json.loads(response.body.decode())
         if result['status'] == 0:
             result['status'] = 1
+            result['msg'] = result['message']
+            del result['message']
             return json.dumps(result, ensure_ascii=False, indent=4)
         else:
             return json.dumps(Response(
