@@ -1,16 +1,15 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-import logging
 import json
+import logging
 
-from tornado import web
-
+from api.postonlyhandler import PostOnlyHandler
 from api.response import Response
 from api.v1.lbs import place
 
 
-class PlaceServiceHandler(web.RequestHandler):
+class PlaceServiceHandler(PostOnlyHandler):
 
     async def post(self):
         try:

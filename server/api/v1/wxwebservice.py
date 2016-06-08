@@ -9,15 +9,16 @@ import string
 import time
 import urllib.request
 
-from tornado import web, gen
+from tornado import gen
 
+from api.postonlyhandler import PostOnlyHandler
 from api.response import Response
 from model.config import Config
 from model.dbutil import DBUtil
 from weixin import wxutil
 
 
-class GetUserInfoHandler(web.RequestHandler):
+class GetUserInfoHandler(PostOnlyHandler):
     @gen.coroutine
     def post(self):
         try:
@@ -41,7 +42,7 @@ class GetUserInfoHandler(web.RequestHandler):
             logging.exception('GetUserInfoHandler error: {0}'.format(str(e)))
 
 
-class SignatureHandler(web.RequestHandler):
+class SignatureHandler(PostOnlyHandler):
     @staticmethod
     def random_str(len=16):
         elements = list(string.ascii_letters + string.digits)

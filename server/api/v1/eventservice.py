@@ -7,14 +7,15 @@ import logging
 
 import peewee
 from playhouse.shortcuts import dict_to_model, model_to_dict
-from tornado import web, gen
+from tornado import gen
 
+from api.postonlyhandler import PostOnlyHandler
 from api.response import Response
 from model.dbutil import DBUtil
 from model.event import Event
 
 
-class GetEventHandler(web.RequestHandler):  # 按番号查询活动
+class GetEventHandler(PostOnlyHandler):  # 按番号查询活动
 
     @staticmethod
     def query(code):
@@ -47,7 +48,7 @@ class GetEventHandler(web.RequestHandler):  # 按番号查询活动
             logging.exception('GetEventHandler error: {0}'.format(str(e)))
 
 
-class PublishEventHandler(web.RequestHandler):  # 创建活动
+class PublishEventHandler(PostOnlyHandler):  # 创建活动
 
     @gen.coroutine
     def post(self):
@@ -67,7 +68,7 @@ class PublishEventHandler(web.RequestHandler):  # 创建活动
             logging.exception('CreateEventHandler error: {0}'.format(str(e)))
 
 
-class ListEventHandler(web.RequestHandler):  # 分页查询活动列表
+class ListEventHandler(PostOnlyHandler):  # 分页查询活动列表
 
     @gen.coroutine
     def post(self):
