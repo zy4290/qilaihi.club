@@ -6,7 +6,7 @@ from peewee import *
 from model import basemodel
 
 
-class TemplatemsgTask(basemodel):
+class TemplatemsgTask(basemodel.BaseModel):
     createtime = DateTimeField(null=True)
     data = TextField(null=True)
     status = IntegerField(null=True)
@@ -17,5 +17,5 @@ class TemplatemsgTask(basemodel):
     msgid = CharField(null=True)
 
     class Meta:
-        db_table = 'customwxmsgtask'
+        db_table = 'templatemsgtask'
         schema = 'qilaihi'

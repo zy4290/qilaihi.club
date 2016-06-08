@@ -6,7 +6,7 @@ from peewee import *
 from model import basemodel
 
 
-class OldSyncMediaTask(basemodel):
+class OldSyncMediaTask(basemodel.BaseModel):
     createtime = DateTimeField(null=True)
     eventid = IntegerField(null=True)
     localpath = CharField(null=True)
