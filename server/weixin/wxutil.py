@@ -5,13 +5,17 @@ import copy
 import datetime
 import json
 import logging
-import os.path
+import os
+import sys
+import time
+from ftplib import FTP
 
 from peewee import DoesNotExist
 from playhouse.shortcuts import dict_to_model, model_to_dict
 from tornado import gen
 from tornado.httpclient import AsyncHTTPClient
 
+from config import sync as syncconfig
 from config import wx as wxconfig
 from model import dbutil
 from model.config import Config
@@ -19,6 +23,7 @@ from model.oldtemplatemsgtask import OldTemplatemsgTask
 from model.templatemsgtask import TemplatemsgTask
 from model.user import User
 
+logger = logging.getLogger(__name__)
 
 @gen.coroutine
 def refresh_access_token():
@@ -184,20 +189,54 @@ def pull_user_info(openid, web_access_token=None):
 
 
 @gen.coroutine
-def download_temp_resource(media_id, path=None):
+def process_temp_resource(media_id):
+    try:
+        logging.info('开始下载media文件:' + media_id)
+        file_info = yield download_temp_resource(media_id)
+        path, filename = file_info['path'], file_info['filename']
+        logging.info('写入本地文件: {0}'.format(path + filename))
+        logging.info('media文件: {0} 下载完成'.format(media_id))
+        logging.info('开始上传media文件到OSS: ' + filename)
+        url = yield upload_temp_resource(path, filename)
+        logging.info('media文件: {0} 上传完毕，URL为{1}'.format(filename, url))
+        os.remove(path + filename)
+        logging.info('删除本地文件: {0}'.format(path + filename))
+        return url
+    except Exception as e:
+        logging.exception('wxutil.download_temp_resource media_id:{0} error: {1}'.format(media_id, str(e)))
+        return None
+
+
+@gen.coroutine
+def download_temp_resource(media_id):
     config = yield dbutil.do(Config.get)
     url = wxconfig.temp_resource_download_url.format(config.accesstoken, media_id)
     http_client = AsyncHTTPClient()
     response = yield http_client.fetch(url)
-    logging.debug(response.headers['Content-disposition'])
-    logging.debug(response.headers['Date'])
     filename = response.headers['Content-disposition'][len('attachment; filename="'):-1]
-    logging.debug(filename)
-    if path is None:
-        with open(filename, mode='wb') as file:
-            file.write(response.body)
+    if syncconfig.store_at:
+        path = syncconfig.store_at
     else:
-        if path[-1] != os.path.sep:
-            path += os.path.sep
-        with open(path + filename, mode='wb') as file:
-            file.write(response.body)
+        path = sys.path[0] + os.path.sep + syncconfig.default_name
+    os.makedirs(path, exist_ok=True)
+    if path[-1] != os.path.sep:
+        path += os.path.sep
+    with open(path + filename, mode='wb') as file:
+        file.write(response.body)
+    return {'path': path, 'filename': filename}
+
+
+@gen.coroutine
+def upload_temp_resource(path, filename):
+    ftp = FTP()
+    ftp.connect(syncconfig.ftp_server, syncconfig.ftp_port)
+    ftp.login(syncconfig.ftp_user, syncconfig.ftp_password)
+    remote_path = '/'.join([
+        time.strftime('%Y'),
+        time.strftime('%m'),
+        time.strftime('%d')
+    ])
+    ftp.mkd(remote_path)
+    with open(path + filename, 'rb') as file:
+        ftp.storbinary('STOR ' + remote_path + '/' + filename, file)
+    return syncconfig.url_prefix + remote_path + '/' + filename
