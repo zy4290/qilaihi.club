@@ -1,16 +1,31 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
-import logging
 from datetime import datetime
 from xml.etree import ElementTree
 
 from tornado import gen
-from tornado.ioloop import IOLoop
 
-from model import dbutil
 from model.wxmessage import WXMessage
-from weixin.msghandler.msgdispatcher import MsgDispatcher
+
+msg_handler_map = {
+    'text': None,
+    'image': None,
+    'voice': None,
+    'video': None,
+    'shortvideo': None,
+    'location': None,
+    'link': None
+}
+
+event_handler_map = {
+    'subscribe': None,
+    'unsubscribe': None,
+    'SCAN': None,
+    'LOCATION': None,
+    'CLICK': None,
+    'VIEW': None
+}
 
 
 class MsgParser:
@@ -48,7 +63,4 @@ class MsgParser:
             msgid=_msgid,
             msg=xml
         )
-
-        yield dbutil.do(wxmsg.save)
-        logging.debug('wxmessage saved.')
-        IOLoop.current().spawn_callback(MsgDispatcher.process, wxmsg)
+        # IOLoop.current().spawn_callback(MsgDispatcher.process, wxmsg)

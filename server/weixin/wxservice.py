@@ -9,7 +9,7 @@ from tornado import web, ioloop, gen
 from config import wx as wxconfig
 from model import dbutil
 from model.config import Config
-from weixin.msghandler.msgparser import MsgParser
+from weixin.msgparser import MsgParser
 
 
 class WeiXinMessageHandler(web.RequestHandler):
