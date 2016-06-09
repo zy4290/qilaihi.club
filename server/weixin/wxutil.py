@@ -19,8 +19,7 @@ from config import sync as syncconfig
 from config import wx as wxconfig
 from model import dbutil
 from model.config import Config
-from model.oldtemplatemsgtask import OldTemplatemsgTask
-from model.templatemsgtask import TemplatemsgTask
+from model.templatemsg import Templatemsg
 from model.user import User
 
 logger = logging.getLogger(__name__)
@@ -71,30 +70,28 @@ def get_jsapi_ticket():
 
 @gen.coroutine
 def send_template_msg(templatemsg):
-    if not isinstance(templatemsg, TemplatemsgTask) or templatemsg is None: return
-    logging.info('wxutil.send_template_msg - 开始发送模板消息：{0}'.format(
-        model_to_dict(templatemsg)))
+    if templatemsg is None: return
+    logging.info('wxutil.send_template_msg - 发送模板消息：{0}'.format(templatemsg))
     config = yield dbutil.do(Config.get)
     url = wxconfig.custom_msg_url.format(config.accesstoken)
-    data = {
-        'touser': templatemsg.touser,
-        'template_id': templatemsg.templateid,
-        'url': templatemsg.url,
-        'data': json.loads(templatemsg.data)
-    }
+    # data = {
+    #     'touser': templatemsg.touser,
+    #     'template_id': templatemsg.templateid,
+    #     'url': templatemsg.url,
+    #     'data': json.loads(templatemsg.data)
+    # }
     http_client = AsyncHTTPClient()
     response = yield http_client.fetch(url, **{'method': 'POST',
-                                               'body': json.dumps(data, ensure_ascii=False)})
+                                               'body': json.dumps(templatemsg, ensure_ascii=False)})
     result = json.loads(response.body.decode())
     errcode = result['errcode']
     if errcode == 0:
-        templatemsg.msgid = result['msgid']
-        templatemsg.updatetime = datetime.datetime.now()
-        oldmsg = dict_to_model(OldTemplatemsgTask, model_to_dict(templatemsg))
-        yield [dbutil.do(oldmsg.save), dbutil.do(templatemsg.delete_instance)]
+        templatemsg['msgid'] = result['msgid']
+        templatemsg['updatetime'] = datetime.datetime.now()
+        tmsg = dict_to_model(Templatemsg, templatemsg)
+        yield dbutil.do(tmsg.save)
     else:
-        raise RuntimeError('wxutil.send_template_msg-发送模板消息失败，消息内容：{0}'.format(
-            model_to_dict(templatemsg)))
+        raise RuntimeError('wxutil.send_template_msg-发送模板消息失败，消息内容：{0}'.format(templatemsg))
 
 
 @gen.coroutine
@@ -167,7 +164,6 @@ def pull_user_info(openid, web_access_token=None):
         user = dict_to_model(User, user_dict, ignore_unknown=True)
     else:
         user = User(openid='openid')
-
     user_id = None
     try:
         _user = dbutil.do(User.get, User.openid == openid)
@@ -175,7 +171,6 @@ def pull_user_info(openid, web_access_token=None):
         exists = True
     except DoesNotExist:
         exists = False
-
     if exists:
         assert user_id
         user.set_id(user_id)
@@ -184,9 +179,31 @@ def pull_user_info(openid, web_access_token=None):
         user.createtime = datetime.datetime.now()
     yield dbutil.do(user.save)
     user = yield dbutil.do(User.get, User.openid == openid)
-
     return model_to_dict(user)
 
+
+@gen.coroutine
+def get_user_info(openid):
+    id = None
+    try:
+        _user = dbutil.do(User.get, User.openid == openid)
+        id = _user.get_id()
+    except DoesNotExist:
+        pass
+    access_token = yield get_access_token()
+    get_user_info_url = wxconfig.get_user_info_url.format(access_token, openid)
+    http_client = AsyncHTTPClient()
+    response = yield http_client.fetch(get_user_info_url)
+    result = json.loads(response.body.decode())
+    try:
+        # 未关注微信号时，会出错
+        result['errcode']
+    except Exception:
+        user = dict_to_model(User, json.loads(result))
+        if id:
+            user.set_id(id)
+        yield dbutil.do(user.save)
+        return model_to_dict(user)
 
 @gen.coroutine
 def process_temp_resource(media_id):
