@@ -24,7 +24,7 @@ def sync_media_file():
         if cur_hour >= syncconfig.start_at and cur_hour < syncconfig.stop_at:
             try:
                 event = yield dbutil.do(Event.select().where(
-                    (Event.syncfinish != 1) | (Event.syncfinish >> None)).order_by(-Event.createtime).get)
+                    (Event.syncfinish != 1) | (Event.syncfinish >> None)).order_by(+Event.createtime).get)
                 logging.info('开始处理活动[#{0}] 的media文件'.format(event.code))
                 all = json.loads(event.mediaids)
                 logging.debug('all ' + str(all))
