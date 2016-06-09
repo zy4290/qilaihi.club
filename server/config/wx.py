@@ -13,6 +13,8 @@ jsapi_ticket_url = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket' + \
                    '?access_token={0}&type=jsapi'
 pull_user_info_url = 'https://api.weixin.qq.com/sns/userinfo?' + \
                      'access_token={0}&openid={1}&lang=zh_CN'
+get_user_info_url = 'https://api.weixin.qq.com/cgi-bin/user/info?' + \
+                    'access_token={0}&openid={1}&lang=zh_CN'
 custom_msg_url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={0}'
 temp_resource_download_url = 'http://api.weixin.qq.com/cgi-bin/media/get?access_token={0}&media_id={1}'
 temp_resource_upload_url = 'http://api.weixin.qq.com/cgi-bin/media/upload?access_token={0}&type={1}'
