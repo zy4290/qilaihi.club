@@ -6,9 +6,9 @@ import logging
 
 from tornado import web, ioloop, gen
 
+from config import wx as wxconfig
+from model import dbutil
 from model.config import Config
-from model.dbutil import DBUtil
-from weixin import config
 from weixin.msghandler.msgparser import MsgParser
 
 
@@ -21,7 +21,7 @@ class WeiXinMessageHandler(web.RequestHandler):
             logging.debug(
                 'signature:{0} timestamp:{1} nonce:{2} echostr:{3}'.
                 format(signature, timestamp, nonce, echostr))
-            _config = yield DBUtil.do(Config().select().get)
+            _config = yield dbutil.do(Config().select().get)
             tmp_list = sorted([_config.token, timestamp, nonce])
             tmp_str = ''.join(tmp_list)
             logging.debug('before sha1: {0}'.format(tmp_str))
@@ -46,9 +46,9 @@ class WeiXinMessageHandler(web.RequestHandler):
             if valid:
                 self.write(echostr)
             else:
-                self.write(config.error_response)
+                self.write(wxconfig.error_response)
         except Exception as e:
-            self.write(config.error_response)
+            self.write(wxconfig.error_response)
             logging.exception('WeiXinMessageHandler error: {0}'.format(str(e)))
 
     @gen.coroutine
@@ -56,9 +56,9 @@ class WeiXinMessageHandler(web.RequestHandler):
         try:
             xml = self.request.body.decode()
             logging.debug(xml)
-            self.write(config.success_response)
+            self.write(wxconfig.success_response)
             ioloop.IOLoop.current().spawn_callback(
                 MsgParser().parse, xml)
         except Exception as e:
-            self.write(config.error_response)
+            self.write(wxconfig.error_response)
             logging.exception('WeiXinMessageHandler error: {0}'.format(str(e)))

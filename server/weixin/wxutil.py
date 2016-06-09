@@ -12,19 +12,19 @@ from playhouse.shortcuts import dict_to_model, model_to_dict
 from tornado import gen
 from tornado.httpclient import AsyncHTTPClient
 
+from config import wx as wxconfig
+from model import dbutil
 from model.config import Config
-from model.dbutil import DBUtil
 from model.oldtemplatemsgtask import OldTemplatemsgTask
 from model.templatemsgtask import TemplatemsgTask
 from model.user import User
-from weixin import config as wxconfig
 
 
 @gen.coroutine
 def refresh_access_token():
     logging.info('开始刷新微信access token')
     try:
-        config = yield DBUtil.do(Config.select().get)
+        config = yield dbutil.do(Config.select().get)
         http_client = AsyncHTTPClient()
         logging.debug(wxconfig.access_token_url.format(config.appid, config.appsecret))
         response = yield http_client.fetch(
@@ -37,7 +37,7 @@ def refresh_access_token():
         logging.debug(config.accesstoken)
         logging.debug(config.jsapiticket)
         logging.debug(config.expires)
-        yield DBUtil.do(config.save)
+        yield dbutil.do(config.save)
     except Exception:
         pass
 
@@ -54,13 +54,13 @@ def refresh_jsapi_ticket(access_token):
 
 @gen.coroutine
 def get_access_token():
-    config = yield DBUtil.do(Config.get)
+    config = yield dbutil.do(Config.get)
     return config.accesstoken
 
 
 @gen.coroutine
 def get_jsapi_ticket():
-    config = yield DBUtil.do(Config.get)
+    config = yield dbutil.do(Config.get)
     return config.jsapiticket
 
 
@@ -69,7 +69,7 @@ def send_template_msg(templatemsg):
     if not isinstance(templatemsg, TemplatemsgTask) or templatemsg is None: return
     logging.info('wxutil.send_template_msg - 开始发送模板消息：{0}'.format(
         model_to_dict(templatemsg)))
-    config = yield DBUtil.do(Config.get)
+    config = yield dbutil.do(Config.get)
     url = wxconfig.custom_msg_url.format(config.accesstoken)
     data = {
         'touser': templatemsg.touser,
@@ -86,7 +86,7 @@ def send_template_msg(templatemsg):
         templatemsg.msgid = result['msgid']
         templatemsg.updatetime = datetime.datetime.now()
         oldmsg = dict_to_model(OldTemplatemsgTask, model_to_dict(templatemsg))
-        yield [DBUtil.do(oldmsg.save), DBUtil.do(templatemsg.delete_instance)]
+        yield [dbutil.do(oldmsg.save), dbutil.do(templatemsg.delete_instance)]
     else:
         raise RuntimeError('wxutil.send_template_msg-发送模板消息失败，消息内容：{0}'.format(
             model_to_dict(templatemsg)))
@@ -99,7 +99,7 @@ def send_custom_msg(msg, reply):
     custom_text['text']['content'] = reply
     logging.debug(custom_text)
 
-    config = yield DBUtil.do(Config.select().get)
+    config = yield dbutil.do(Config.select().get)
     url = wxconfig.custom_msg_url.format(config.accesstoken)
     logging.debug(url)
 
@@ -115,7 +115,7 @@ def get_oauth2_access_code(code):
     if code:
         return '{}'
 
-    config = DBUtil.do(Config.get)
+    config = dbutil.do(Config.get)
     appid = config.appid
     secret = config.appsecret
     oauth2_url = wxconfig.oauth2_access_token_url.format(appid, secret, code)
@@ -130,7 +130,7 @@ def refresh_oauth2_access_code(refresh_token):
     if refresh_access_token:
         return '{}'
 
-    config = DBUtil.do(Config.get)
+    config = dbutil.do(Config.get)
     appid = config.appid
     oauth2_refresh_url = wxconfig.oauth2_access_token_refresh_url.format(appid, refresh_token)
     http_client = AsyncHTTPClient()
@@ -165,7 +165,7 @@ def pull_user_info(openid, web_access_token=None):
 
     user_id = None
     try:
-        _user = DBUtil.do(User.get, User.openid == openid)
+        _user = dbutil.do(User.get, User.openid == openid)
         user_id = _user.get_id()
         exists = True
     except DoesNotExist:
@@ -177,15 +177,15 @@ def pull_user_info(openid, web_access_token=None):
         user.updatetime = datetime.datetime.now()
     else:
         user.createtime = datetime.datetime.now()
-    yield DBUtil.do(user.save)
-    user = yield DBUtil.do(User.get, User.openid == openid)
+    yield dbutil.do(user.save)
+    user = yield dbutil.do(User.get, User.openid == openid)
 
     return model_to_dict(user)
 
 
 @gen.coroutine
 def download_temp_resource(media_id, path=None):
-    config = yield DBUtil.do(Config.get)
+    config = yield dbutil.do(Config.get)
     url = wxconfig.temp_resource_download_url.format(config.accesstoken, media_id)
     http_client = AsyncHTTPClient()
     response = yield http_client.fetch(url)

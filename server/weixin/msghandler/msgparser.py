@@ -2,14 +2,13 @@
 # coding: utf-8
 
 import logging
-
 from datetime import datetime
 from xml.etree import ElementTree
 
 from tornado import gen
 from tornado.ioloop import IOLoop
 
-from model.dbutil import DBUtil
+from model import dbutil
 from model.wxmessage import WXMessage
 from weixin.msghandler.msgdispatcher import MsgDispatcher
 
@@ -50,6 +49,6 @@ class MsgParser:
             msg=xml
         )
 
-        yield DBUtil.do(wxmsg.save)
+        yield dbutil.do(wxmsg.save)
         logging.debug('wxmessage saved.')
         IOLoop.current().spawn_callback(MsgDispatcher.process, wxmsg)

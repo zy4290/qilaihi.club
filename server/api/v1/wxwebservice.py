@@ -13,8 +13,8 @@ from tornado import gen
 
 from api.postonlyhandler import PostOnlyHandler
 from api.response import Response
+from model import dbutil
 from model.config import Config
-from model.dbutil import DBUtil
 from weixin import wxutil
 
 
@@ -69,7 +69,7 @@ class SignatureHandler(PostOnlyHandler):
             sha1 = hashlib.sha1(tmp_str.encode()).hexdigest()
             del param['jsapi_ticket']
             param['signature'] = sha1
-            config = yield DBUtil.do(Config.get)
+            config = yield dbutil.do(Config.get)
             param['appid'] = config.appid
             self.write(Response(
                 status=1, msg='ok',

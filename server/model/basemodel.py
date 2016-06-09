@@ -8,4 +8,4 @@ from model import dbutil
 
 class BaseModel(Model):
     class Meta:
-        database = dbutil.DBUtil().get_db()
+        database = dbutil.get_db()

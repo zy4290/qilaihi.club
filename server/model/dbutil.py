@@ -6,38 +6,35 @@ from concurrent.futures import ThreadPoolExecutor
 
 from tornado import gen
 
-from model import __param__
+from config import db as dbconfig
 
-db = __param__.db(
-    __param__.database, max_connections=__param__.max_connection,
-    stale_timeout=__param__.stale_timeout,
-    host=__param__.ip, port=__param__.port, user=__param__.user,
-    password=__param__.password, charset=__param__.charset)
+db = dbconfig.db(
+    database=dbconfig.database, host=dbconfig.ip,
+    port=dbconfig.port, user=dbconfig.user,
+    password=dbconfig.password, charset=dbconfig.charset)
 
-executor = ThreadPoolExecutor(max_workers=__param__.max_connection)
+executor = ThreadPoolExecutor(max_workers=8)
 
-class DBUtil:
 
-    @staticmethod
-    def get_db():
-        return db
+def get_db():
+    return db
 
-    @staticmethod
-    def _do(query, expr=None):
-        try:
-            db.connect()
-            if expr:
-                return query(expr)
-            else:
-                return query()
-        finally:
-            if not db.is_closed():
-                db.close()
-            else:
-                logging.warning('db connection is closed.')
 
-    @staticmethod
-    @gen.coroutine
-    def do(query, expr=None):
-        result = yield executor.submit(DBUtil._do, *(query, expr))
-        return result
+def _do(query, expr=None):
+    try:
+        get_db().connect()
+        if expr:
+            return query(expr)
+        else:
+            return query()
+    finally:
+        if not get_db().is_closed():
+            get_db().close()
+        else:
+            logging.warning('db connection is closed.')
+
+
+@gen.coroutine
+def do(query, expr=None):
+    result = yield executor.submit(_do, *(query, expr))
+    return result

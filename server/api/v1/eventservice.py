@@ -11,7 +11,7 @@ from tornado import gen
 
 from api.postonlyhandler import PostOnlyHandler
 from api.response import Response
-from model.dbutil import DBUtil
+from model import dbutil
 from model.event import Event
 
 
@@ -32,7 +32,7 @@ class GetEventHandler(PostOnlyHandler):  # 按番号查询活动
             request = json.loads(self.request.body.decode())
             code = request['code']
             logging.debug('code: {0}'.format(code))
-            result = yield DBUtil.do(self.query, code)
+            result = yield dbutil.do(self.query, code)
             if result['status'] == -1:
                 self.write(Response(
                     status=1, msg='sorry，亲，该活动已关闭',
@@ -57,7 +57,7 @@ class PublishEventHandler(PostOnlyHandler):  # 创建活动
             logging.debug(data)
             event = dict_to_model(Event, data)
             event.createtime = datetime.datetime.now()
-            result = yield DBUtil.do(event.save)
+            result = yield dbutil.do(event.save)
             assert result == 1
             self.write(Response(
                 status=1, msg='恭喜你，活动发布成功！',
@@ -70,15 +70,19 @@ class PublishEventHandler(PostOnlyHandler):  # 创建活动
 
 class ListEventHandler(PostOnlyHandler):  # 分页查询活动列表
 
+    # logger = logging.getLogger('ListEventHandler')
+
     @gen.coroutine
     def post(self):
         try:
             data = json.loads(self.request.body.decode())
+            # self.logger.log(logging.DEBUG, data)
+            logging.debug(data)
             # 默认查询第一页
             page_number = data.get('page_number', 1)
             # 默认每页显示4条数据
             items_per_page = data.get('items_per_page', 4)
-            query = yield DBUtil.do(
+            query = yield dbutil.do(
                 Event.select().order_by(-Event.createtime).paginate(
                     page_number, items_per_page).dicts)
             result = [event for event in query]
