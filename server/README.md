@@ -1,11 +1,20 @@
 # qilaihi.me server
 
-## TODO
-* 发送微信模板消息
-* 同步微信多媒体文件到阿里云
-* 解析微信location事件,更新用户地址
-* 设计实现微信文字IVR
+## Todo List
+* 微信消息和事件
+  * 用户关注，更新用户信息
+  * 上报地理位置，更新用户信息
+  * 根据带参数二维码，推送活动单图文
+* 微信文字IVR
+  * \#番号-按番号模糊查询，推送活动图文
+  * ?-根据用户偏好随机推送本地区活动图文
+  * $/￥-获取红包口令
 * “活动”页面API
+  * 关注活动
+  * 参加活动
+  * 评论
+  * 评分（人）
+  * 评分（活动）
 * “足迹”页面API
 * “我的”页面API
 
@@ -17,22 +26,40 @@
     PyMySQL (0.7.4)
 
 ## 启动
-    chmod +x $REPO_PATH/server/server.py
-    server.py -logging=DEBUG -log_file_prefix=./log -port=8080 \
+    python3.5 server.py -logging=DEBUG -log_file_prefix=./8080.log -port=8080 \
     -debug=True -autoreload=True
+    python3.5 refresh_access_token.py -log_file_prefix=./token.log
+    python3.5 sync_media_file.py -log_file_prefix=./media.log
     
 ## 配置
-### # model/__param__.py for db connection
-    db = PooledMySQLDatabase
-    max_connection = 100
-    stale_timeout = None
-    ip = '__ip__'
-    port = 3306
-    user = '__user__'
-    password = '__password__'
-    database = '__schema__'
-    charset = '__charset__'
-    
+### 1 数据库配置
+config/db.py
+```
+db = RetryPooledMySQLDB
+max_connection = 20
+stale_timeout = 60
+ip = 'qilaihi.me'
+port = 3306
+user = 'root'
+password = '98027531z'
+database = 'qilaihi'
+charset = 'utf8'
+```
+### 2 文件同步配置
+config/sync.py
+```
+start_at = 0
+stop_at = 24
+store_at = None
+default_name = 'media'
+
+ftp_server = 'qilaihi.me'
+ftp_port = 2048
+ftp_user = 'Bmu2UkXJfEhgKnEQ/qilaihi-upload'
+ftp_password = 'TVyUpvMoaythoGaw4t02I4kohCxZ9e'
+
+url_prefix = 'http://u.qilaihi.me/'
+```
 ## 接口
 ### 0. 前提
 服务请求类型**POST**，数据格式**JSON**，编码**UTF-8**
