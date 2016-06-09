@@ -6,15 +6,16 @@ from peewee import *
 from model import basemodel
 
 
-class SyncMediaTask(basemodel.BaseModel):
+class Templatemsg(basemodel.BaseModel):
     createtime = DateTimeField(null=True)
-    eventid = IntegerField(null=True)
-    localpath = CharField(null=True)
-    mediaid = CharField(null=True)
-    ossurl = CharField(null=True)
+    data = TextField(null=True)
     status = IntegerField(null=True)
+    templateid = CharField(null=True)
+    touser = CharField(null=True)
     updatetime = DateTimeField(null=True)
+    url = CharField(null=True)
+    msgid = CharField(null=True)
 
     class Meta:
-        db_table = 'syncmediatask'
+        db_table = 'templatemsg'
         schema = 'qilaihi'
