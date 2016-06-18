@@ -200,7 +200,7 @@ def get_user_info(openid):
         # 未关注微信号时，会出错
         result['errcode']
     except Exception:
-        user = dict_to_model(User, json.loads(result))
+        user = dict_to_model(User, result)
         if id:
             user.set_id(id)
         # yield dbutil.do(user.save)
