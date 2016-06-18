@@ -187,7 +187,7 @@ def pull_user_info(openid, web_access_token=None):
 def get_user_info(openid):
     id = None
     try:
-        _user = dbutil.do(User.get, User.openid == openid)
+        _user = yield dbutil.do(User.get, User.openid == openid)
         id = _user.get_id()
     except DoesNotExist:
         pass
