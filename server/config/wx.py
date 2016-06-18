@@ -22,22 +22,3 @@ temp_resource_upload_url = 'http://api.weixin.qq.com/cgi-bin/media/upload?access
 success_response = 'success'
 error_response = ''
 custom_text_template = {'touser': None, 'msgtype': 'text', 'text': {'content': None}}
-
-msg_handler_map = {
-    'text': None,
-    'image': None,
-    'voice': None,
-    'video': None,
-    'shortvideo': None,
-    'location': None,
-    'link': None
-}
-
-event_handler_map = {
-    'subscribe': None,
-    'unsubscribe': None,
-    'SCAN': None,
-    'LOCATION': None,
-    'CLICK': None,
-    'VIEW': None
-}

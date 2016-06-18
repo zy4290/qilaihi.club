@@ -7,13 +7,32 @@ from xml.etree import ElementTree
 
 from tornado import gen
 
-from config import wx
 from model import dbutil
 from model.wxmessage import WXMessage
+from weixin.eventparser.subscribehandler import SubscribeHandler
+from weixin.eventparser.unsubscribehandler import UnSubscribeHandler
+
+msg_handler_map = {
+    'text': None,
+    'image': None,
+    'voice': None,
+    'video': None,
+    'shortvideo': None,
+    'location': None,
+    'link': None
+}
+
+event_handler_map = {
+    'subscribe': SubscribeHandler,
+    'unsubscribe': UnSubscribeHandler,
+    'SCAN': None,
+    'LOCATION': None,
+    'CLICK': None,
+    'VIEW': None
+}
 
 
 class MsgParser:
-
     @staticmethod
     def _text(element):
         if element is not None:
@@ -49,13 +68,13 @@ class MsgParser:
 
         try:
             if wxmsg.msgtype != 'event':
-                msg_handler = wx.msg_handler_map.get(wxmsg.msgtype, None)
+                msg_handler = msg_handler_map.get(wxmsg.msgtype, None)
                 if msg_handler:
                     yield msg_handler.process(wxmsg)
                 else:
                     logging.warning('检测到未注册的消息类型：{0} 消息体:{1}'.format(wxmsg.msgtype, xml))
             else:
-                event_handler = wx.event_handler_map.get(wxmsg.event, None)
+                event_handler = event_handler_map.get(wxmsg.event, None)
                 if event_handler:
                     yield event_handler.process(wxmsg)
                 else:
