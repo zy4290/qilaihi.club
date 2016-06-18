@@ -8,11 +8,13 @@ import logging
 import peewee
 from playhouse.shortcuts import dict_to_model, model_to_dict
 from tornado import gen
+from tornado import ioloop
 
 from api.postonlyhandler import PostOnlyHandler
 from api.response import Response
 from model import dbutil
 from model.event import Event
+from weixin import wxutil
 
 
 class GetEventHandler(PostOnlyHandler):  # 按番号查询活动
@@ -50,6 +52,13 @@ class GetEventHandler(PostOnlyHandler):  # 按番号查询活动
 
 class PublishEventHandler(PostOnlyHandler):  # 创建活动
 
+    @staticmethod
+    @gen.coroutine
+    def get_qrcode(event):
+        event.qrcodeurl = yield wxutil.get_temp_qrcode_url(event.get_id())
+        event.qrcodecreatetime = datetime.datetime.now()
+        yield dbutil.do(event.save)
+
     @gen.coroutine
     def post(self):
         try:
@@ -57,12 +66,12 @@ class PublishEventHandler(PostOnlyHandler):  # 创建活动
             logging.debug(data)
             event = dict_to_model(Event, data)
             event.createtime = datetime.datetime.now()
-            result = yield dbutil.do(event.save)
-            assert result == 1
+            yield dbutil.do(event.save)
             self.write(Response(
                 status=1, msg='恭喜你，活动发布成功！',
                 result={}
             ).json())
+            ioloop.IOLoop.current().spawn_callback(self.get_qrcode, event)
         except Exception as e:
             self.write(Response(msg='sorry，亲，活动发布失败').json())
             logging.exception('CreateEventHandler error: {0}'.format(str(e)))
