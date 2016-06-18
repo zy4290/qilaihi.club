@@ -58,7 +58,7 @@ def sync_media_file():
 
 
 if __name__ == '__main__':
-    options.logging = 'info'
+    options.logging = 'debug'
     options.parse_command_line()
     ioloop.IOLoop.current().spawn_callback(sync_media_file)
     ioloop.IOLoop.current().start()
