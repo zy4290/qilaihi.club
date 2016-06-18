@@ -1,31 +1,15 @@
 #! /usr/bin/env python3.5
 # coding: utf-8
 
+import logging
 from datetime import datetime
 from xml.etree import ElementTree
 
 from tornado import gen
 
+from config import wx
+from model import dbutil
 from model.wxmessage import WXMessage
-
-msg_handler_map = {
-    'text': None,
-    'image': None,
-    'voice': None,
-    'video': None,
-    'shortvideo': None,
-    'location': None,
-    'link': None
-}
-
-event_handler_map = {
-    'subscribe': None,
-    'unsubscribe': None,
-    'SCAN': None,
-    'LOCATION': None,
-    'CLICK': None,
-    'VIEW': None
-}
 
 
 class MsgParser:
@@ -52,7 +36,6 @@ class MsgParser:
         _content = MsgParser._text(xml_data.find('Content'))
         _msgid = MsgParser._text(xml_data.find('MsgId'))
         _event = MsgParser._text(xml_data.find('Event'))
-
         wxmsg = WXMessage.create(
             content=_content,
             tousername=_tousername,
@@ -63,4 +46,21 @@ class MsgParser:
             msgid=_msgid,
             msg=xml
         )
-        # IOLoop.current().spawn_callback(MsgDispatcher.process, wxmsg)
+
+        try:
+            if wxmsg.msgtype != 'event':
+                msg_handler = wx.msg_handler_map.get(wxmsg.msgtype, None)
+                if msg_handler:
+                    yield msg_handler.process(wxmsg)
+                else:
+                    logging.warning('检测到未注册的消息类型：{0} 消息体:{1}'.format(wxmsg.msgtype, xml))
+            else:
+                event_handler = wx.event_handler_map.get(wxmsg.event, None)
+                if event_handler:
+                    yield event_handler.process(wxmsg)
+                else:
+                    logging.warning('检测到未注册的事件类型：{0} 消息体:{1}'.format(wxmsg.event, xml))
+        except Exception as e:
+            logging.exception('处理消息发生异常：{0}，异常消息：{1}'.format(xml, str(e)))
+        finally:
+            yield dbutil.do(wxmsg.save)
