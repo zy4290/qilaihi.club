@@ -21,4 +21,4 @@ class TextMsgHandler(BaseMsgHandler):
 
     @gen.coroutine
     def process(self, wxmsg):
-        pass
+        yield super().process(wxmsg)
