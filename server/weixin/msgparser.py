@@ -11,9 +11,10 @@ from model.wxmessage import WXMessage
 from weixin.eventparser.locationhandler import LocationHandler
 from weixin.eventparser.subscribehandler import SubscribeHandler
 from weixin.eventparser.unsubscribehandler import UnSubscribeHandler
+from weixin.msghandler.textmsghanlder import TextMsgHandler
 
 msg_handler_map = {
-    'text': None,
+    'text': TextMsgHandler(),
     'image': None,
     'voice': None,
     'video': None,
@@ -23,10 +24,10 @@ msg_handler_map = {
 }
 
 event_handler_map = {
-    'subscribe': SubscribeHandler,
-    'unsubscribe': UnSubscribeHandler,
+    'subscribe': SubscribeHandler(),
+    'unsubscribe': UnSubscribeHandler(),
     'SCAN': None,
-    'LOCATION': LocationHandler,
+    'LOCATION': LocationHandler(),
     'CLICK': None,
     'VIEW': None
 }
