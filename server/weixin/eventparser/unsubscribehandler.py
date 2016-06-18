@@ -11,7 +11,7 @@ from weixin.basemsghandler import BaseMsgHandler
 class UnSubscribeHandler(BaseMsgHandler):
     @gen.coroutine
     def process(self, wxmsg):
-        user = yield dbutil.do(User.get(User.openid == wxmsg.fromusername))
+        user = yield dbutil.do(User.select().where(User.openid == wxmsg.fromusername).get)
         user.subscribe = 0
         dbutil.do(user.save)
         yield super().process(wxmsg)
