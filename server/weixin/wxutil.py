@@ -196,11 +196,12 @@ def get_user_info(openid):
     http_client = AsyncHTTPClient()
     response = yield http_client.fetch(get_user_info_url)
     result = json.loads(response.body.decode())
+    logging.debug(result)
     try:
         # 未关注微信号时，会出错
         result['errcode']
     except Exception:
-        user = dict_to_model(User, result)
+        user = dict_to_model(User, result, ignore_unknown=True)
         if id:
             user.set_id(id)
         # yield dbutil.do(user.save)
