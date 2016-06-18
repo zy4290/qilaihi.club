@@ -7,8 +7,8 @@ from xml.etree import ElementTree
 
 from tornado import gen
 
-from model import dbutil
 from model.wxmessage import WXMessage
+from weixin.eventparser.locationhandler import LocationHandler
 from weixin.eventparser.subscribehandler import SubscribeHandler
 from weixin.eventparser.unsubscribehandler import UnSubscribeHandler
 
@@ -26,7 +26,7 @@ event_handler_map = {
     'subscribe': SubscribeHandler,
     'unsubscribe': UnSubscribeHandler,
     'SCAN': None,
-    'LOCATION': None,
+    'LOCATION': LocationHandler,
     'CLICK': None,
     'VIEW': None
 }
@@ -81,5 +81,5 @@ class MsgParser:
                     logging.warning('检测到未注册的事件类型：{0} 消息体:{1}'.format(wxmsg.event, xml))
         except Exception as e:
             logging.exception('处理消息发生异常：{0}，异常消息：{1}'.format(xml, str(e)))
-        finally:
-            yield dbutil.do(wxmsg.save)
+            # finally:
+            #    yield dbutil.do(wxmsg.save)
