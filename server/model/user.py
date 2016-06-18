@@ -32,6 +32,7 @@ class User(basemodel.BaseModel):
     tagprefs = CharField(null=True)
     unionid = CharField(null=True)
     updatetime = DateTimeField(null=True)
+    language = CharField(null=True)
 
     class Meta:
         db_table = 'user'
