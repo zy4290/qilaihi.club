@@ -3,8 +3,10 @@
 
 from tornado import gen
 
+from model import dbutil
+
 
 class BaseMsgHandler:
     @gen.coroutine
     def process(self, wxmsg):
-        raise NotImplementedError
+        yield dbutil.do(wxmsg.save)
