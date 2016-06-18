@@ -21,7 +21,7 @@ class Event(basemodel.BaseModel):
     location = CharField(null=True)
     longitude = CharField(null=True)
     mediaids = TextField(null=True)
-    organizerid = IntegerField(null=True)
+    organizerid = CharField(null=True)
     singupcount = IntegerField(null=True)
     status = IntegerField(null=True)
     syncfinish = IntegerField(null=True)
@@ -32,6 +32,8 @@ class Event(basemodel.BaseModel):
     title = CharField(null=True)
     updatetime = DateTimeField(null=True)
     viewcount = IntegerField(null=True)
+    qrcodecreatetime = DateTimeField(null=True)
+    qrcodeurl = CharField(null=True)
 
     class Meta:
         db_table = 'event'
