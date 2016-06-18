@@ -202,8 +202,9 @@ def get_user_info(openid):
         user = dict_to_model(User, json.loads(result))
         if id:
             user.set_id(id)
-        yield dbutil.do(user.save)
+        # yield dbutil.do(user.save)
         return model_to_dict(user)
+    logging.error('拉取用户信息出错：{0}'.format(result))
 
 @gen.coroutine
 def process_temp_resource(media_id):
