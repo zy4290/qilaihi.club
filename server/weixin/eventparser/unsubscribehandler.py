@@ -14,3 +14,4 @@ class UnSubscribeHandler(BaseMsgHandler):
         user = yield dbutil.do(User.get(User.openid == wxmsg.fromusername))
         user.subscribe = 0
         dbutil.do(user.save)
+        yield super().process(wxmsg)

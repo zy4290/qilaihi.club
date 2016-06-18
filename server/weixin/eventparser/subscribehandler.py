@@ -16,6 +16,6 @@ class SubscribeHandler(BaseMsgHandler):
     @gen.coroutine
     def process(self, wxmsg):
         user = yield wxutil.get_user_info(wxmsg.fromusername)
-        if user:
-            dbutil.do(shortcuts.dict_to_model(User, user).save)
-            wxmsg.response, wxmsg.responsetime = 1, datetime.datetime.now()
+        dbutil.do(shortcuts.dict_to_model(User, user).save)
+        wxmsg.response, wxmsg.responsetime = 1, datetime.datetime.now()
+        yield super().process(wxmsg)
