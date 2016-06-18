@@ -12,6 +12,7 @@ from ftplib import FTP
 
 from peewee import DoesNotExist
 from playhouse.shortcuts import dict_to_model, model_to_dict
+from tornado import escape
 from tornado import gen
 from tornado.httpclient import AsyncHTTPClient
 
@@ -258,3 +259,24 @@ def upload_temp_resource(path, filename):
     with open(path + filename, 'rb') as file:
         ftp.storbinary('STOR ' + remote_path + '/' + filename, file)
     return syncconfig.url_prefix + remote_path + '/' + filename
+
+
+@gen.coroutine
+def get_temp_qrcode_url(event_id):
+    access_token = yield get_access_token()
+    url = wxconfig.temp_qrcode_url.format(access_token)
+    param = {
+        'expire_seconds': 2592000,
+        'action_name': 'QR_SCENE',
+        'action_info': {
+            'scene': {
+                'scene_id': event_id
+            }
+        }
+    }
+    http_client = AsyncHTTPClient()
+    response = yield http_client.fetch(url, **{'method': 'POST',
+                                               'body': json.dumps(param, ensure_ascii=False)})
+    result = json.loads(response.body.decode())
+    ticket = escape.url_escape(result['ticket'])
+    return wxconfig.temp_qrcode_ticket_url.format(ticket)
