@@ -9,7 +9,7 @@ import time
 from peewee import DoesNotExist
 from tornado import gen
 from tornado import ioloop
-from tornado.options import options
+from tornado.options import define, options
 
 from config import sync as syncconfig
 from model import dbutil
@@ -62,6 +62,9 @@ def sync_media_file():
         else:
             yield gen.sleep(60 * 10)
 
+
+define('debug', True, type=bool)
+define('autoreload', True, type=bool)
 
 if __name__ == '__main__':
     options.logging = 'debug'

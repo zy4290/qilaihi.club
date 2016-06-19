@@ -3,9 +3,12 @@
 
 
 from tornado import ioloop
-from tornado.options import options
+from tornado.options import define, options
 
 from weixin import wxutil
+
+define('debug', True, type=bool)
+define('autoreload', True, type=bool)
 
 if __name__ == '__main__':
     options.logging = 'debug'
