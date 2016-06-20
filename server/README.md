@@ -22,6 +22,7 @@
     tornado (4.3)
     peewee (2.8.1)
     PyMySQL (0.7.4)
+    xpinyin (0.5.4)
 
 ## 启动
     python3.5 server.py -logging=DEBUG -log_file_prefix=./8080.log -port=8080 \
@@ -139,6 +140,23 @@ url_prefix = 'http://u.qilaihi.me/'
         "latitude":"30.575504"
         "longitude":"114.379627"
         "organizerid":"o-7des8JLh-sCql5MZ2_oSLImxdc"
+    }
+```
+##### 2.3 检索活动
+本接口根据传入的字符全文检索番号字段，按相似度由高到低返回检索结果`
+接口地址：
+```
+    http://qilaihi.me/api/v1/event/publish
+```
+请求数据示例:
+```
+    支持中文
+    {
+        "code":"大王派我来巡山"
+    }
+    支持拼音或首字母缩写，大小写均可
+    {
+        "code":"dwpwlxs"
     }
 ```
 #### 3. 微信JS SDK
