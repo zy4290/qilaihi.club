@@ -6,7 +6,7 @@ import logging
 
 from api.postonlyhandler import PostOnlyHandler
 from api.response import Response
-from api.v1.lbs import place
+from service import place
 
 
 class PlaceServiceHandler(PostOnlyHandler):
