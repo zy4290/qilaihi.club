@@ -6,9 +6,9 @@ import logging
 from tornado import web, ioloop
 from tornado.options import define, options
 
-from api.v1.eventservice import ListEventHandler, PublishEventHandler, GetEventHandler, QueryEventHandler
-from api.v1.lbsservice import PlaceServiceHandler
-from api.v1.wxwebservice import GetUserInfoHandler, SignatureHandler
+from api.v1 import eventservice
+from api.v1 import lbsservice
+from api.v1 import wxwebservice
 from route import page
 from weixin import wxservice
 
@@ -32,17 +32,17 @@ if __name__ == "__main__":
         # HTTP API
 
         # 地址API
-        (r'/api/v1/place/query', PlaceServiceHandler),
+        (r'/api/v1/place/query', lbsservice.PlaceServiceHandler),
 
         # 活动API
-        (r'/api/v1/event/list', ListEventHandler),
-        (r'/api/v1/event/publish', PublishEventHandler),
-        (r'/api/v1/event/get', GetEventHandler),
-        (r'/api/v1/event/query', QueryEventHandler),
+        (r'/api/v1/event/list', eventservice.ListEventHandler),
+        (r'/api/v1/event/publish', eventservice.PublishEventHandler),
+        (r'/api/v1/event/get', eventservice.GetEventHandler),
+        (r'/api/v1/event/query', eventservice.QueryEventHandler),
 
         # 微信页面 API
-        (r'/api/v1/wxweb/user/get', GetUserInfoHandler),
-        (r'/api/v1/wxweb/url/sign', SignatureHandler),
+        (r'/api/v1/wxweb/user/get', wxwebservice.GetUserInfoHandler),
+        (r'/api/v1/wxweb/url/sign', wxwebservice.SignatureHandler),
 
         # 微信服务入口
         (r'/weixin', wxservice.WeiXinMessageHandler),
