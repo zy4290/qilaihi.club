@@ -11,6 +11,8 @@ class Event(basemodel.BaseModel):
     address = CharField(null=True)
     agerange = IntegerField(null=True)
     code = CharField(unique=True)
+    codepinyin = CharField(null=True)
+    codepinyininitials = CharField(null=True)
     createtime = DateTimeField(null=True)
     dislikecount = IntegerField(null=True)
     expectsignups = IntegerField(null=True)
