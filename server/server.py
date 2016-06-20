@@ -26,7 +26,8 @@ if __name__ == "__main__":
 
     application = web.Application([
         # 页面路由
-        # (r'/', page.HomePageHandler),
+        (r'/', page.HomeHandler),
+        (r'/event.*', page.EventHandler),
 
         # HTTP API
 
@@ -47,7 +48,7 @@ if __name__ == "__main__":
         (r'/weixin', wxservice.WeiXinMessageHandler),
 
         # 异常处理
-        (r'/.*', page.DefaultHandler)
+        (r'/.*', page.PageNotFoundHandler)
 
     ], **settings)
 

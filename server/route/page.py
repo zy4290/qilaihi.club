@@ -1,25 +1,26 @@
 #! /usr/bin/env python3.5
 # -*- coding: utf-8 -*-
 
+import os
+import sys
+
 from tornado import web
 
 
-class DefaultHandler(web.RequestHandler):
+class PageNotFoundHandler(web.RequestHandler):
     def get(self):
         self.write_error(404)
 
     def write_error(self, status_code, **kwargs):
-        self.set_status(status_code)
+        self.set_status(status_code, 'Page Not Found')
+        self.write('404 Page Not Found')
 
 
-class HomePageHandler(web.RequestHandler):
-
+class HomeHandler(web.RequestHandler):
     def get(self):
-        self.write("hello world")
+        self.render(sys.path[0] + os.path.sep + 'webroot/index.html')
 
 
-class EventPageHandler(web.RequestHandler):
-
+class EventHandler(web.RequestHandler):
     def get(self):
-        self.write("hello event")
-
+        self.render(sys.path[0] + os.path.sep + 'webroot/event.html')
