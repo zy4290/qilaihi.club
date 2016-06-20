@@ -6,7 +6,7 @@ import logging
 from tornado import web, ioloop
 from tornado.options import define, options
 
-from api.v1.eventservice import ListEventHandler, PublishEventHandler, GetEventHandler
+from api.v1.eventservice import ListEventHandler, PublishEventHandler, GetEventHandler, QueryEventHandler
 from api.v1.lbsservice import PlaceServiceHandler
 from api.v1.wxwebservice import GetUserInfoHandler, SignatureHandler
 from route import page
@@ -37,6 +37,7 @@ if __name__ == "__main__":
         (r'/api/v1/event/list', ListEventHandler),
         (r'/api/v1/event/publish', PublishEventHandler),
         (r'/api/v1/event/get', GetEventHandler),
+        (r'/api/v1/event/query', QueryEventHandler),
 
         # 微信页面 API
         (r'/api/v1/wxweb/user/get', GetUserInfoHandler),
