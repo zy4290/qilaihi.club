@@ -8,12 +8,12 @@ from tornado import gen
 from tornado import httpclient
 
 from api.response import Response
-from api.v1.lbs import __util__
+from config import baidu
 
 
 @gen.coroutine
 def get(query, region):
-    url = yield __util__.get_baidu_api_url(query, region)
+    url = yield baidu.get_baidu_api_url(query, region)
     logging.debug(url)
     http_client = httpclient.AsyncHTTPClient()
     try:
