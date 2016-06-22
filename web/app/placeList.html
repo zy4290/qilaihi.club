@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>活动发布-地点搜索</title>
+    <link href="/css/weui.css" rel="stylesheet" type="text/css" />
+    <link href="/css/main.css" rel="stylesheet" type="text/css" />
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 10.8 + 'px';
+        })();
+    </script>
+    <script>
+        function getEvents() {
+            query = $("#search_input").val();
+            region = $("#region").val();
+            var html = '';
+            $.ajax({
+                type: "POST",
+                url: "/api/v1/place/query",
+                data: JSON.stringify({
+                    query: query,
+                    region: region
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    $("#event").html('返回结果<br/><p>' + JSON.stringify(data) + '</p>');
+                    for(i=0;i<data.results.length;i++){
+                        html += "<a class='weui_cell f40' href='javascript:;'><div class='weui_cell_bd weui_cell_primary'><p>"+data.results[i].address+"</p></div><div class='weui_cell_ft'><embed src='/img/right.svg'></embed></div></a>"
+                    }
+                    $('.placelist').html(html);
+                    console.log(data)
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <a class="top_back fl" href="#"><embed src="/img/back.svg"></embed>返回</a>
+        <a class="logo fr" href="/"><img src="/img/logo.png"/></a>
+    </div>
+    <div class="pl_main ">
+        <div class="weui_search_bar" id="search_bar">
+            <form class="weui_search_outer">
+                <div class="weui_search_inner clearfix" style="width: 100%; box-sizing: border-box;">
+                    <i class="weui_icon_search fl"></i>
+                    <input type="text" value="金融港" style="width: 100%; box-sizing: border-box; margin-top: 0.1rem" class="weui_search_input fl" id="search_input" placeholder="搜索" />
+                    <input type="text" id="region" value="武汉" style="display: none" placeholder="市">
+                    <a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
+                </div>
+            </form>
+            <a href="javascript:" class="f40 weui_search_cancel" onclick="getEvents()" id="search_cancel" style="display: block;">搜索</a>
+        </div>
+        <div class="placelist weui_cells weui_cells_access">
+
+        </div>
+    </div>
+</body>
+
+</html>

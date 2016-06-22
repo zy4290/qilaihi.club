@@ -2,12 +2,215 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>hello</title>
+    <title>index</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link href="/css/weui.css" rel="stylesheet" type="text/css" />
+    <link href="/css/main.css" rel="stylesheet" type="text/css" />
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 10.8 + 'px';
+        })();
+    </script>
 </head>
 <body>
-<p>
-    张琰向你问好。。。
-    <a href="/event">查看活动</a>
-</p>
+<div class="header">
+    <a class="logo fl" href="/"><img src="/img/logo.png"/> </a>
+    <div class="top_place">
+        <a href="#">
+            <span id="place">北京市</span>
+            <embed src="/img/city.svg"></embed>
+        </a>
+    </div>
+    <a class="add_active fr" href="/placeList">
+        <span>发布活动</span>
+        <embed src="/img/add.svg"></embed>
+    </a>
+    <div id="allmap"></div>
+</div>
+<div class="index_main">
+    <div class="weui_cells weui_cells_access">
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_hd">
+                <img class="index_pic" src="/img/logo.png"/>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p class="txt"><span class="f36">我们都是少数派</span></p>
+                <p class="txt"><embed align="center" class="index_icon" src="/img/time.svg"></embed><span class="f36">2016-5-25 21时</span></p>
+                <p class="f32">汉街老街烧烤，睡不着的都过来呀第二行汉街老街烧烤，睡不着的都过来呀第二行</p>
+            </div>
+            <div class="weui_cell_ft">
+                <div>
+                    <p class="f32"><embed align="center" src="/img/foot.svg"></embed>距离：约<span>3</span>公里</p>
+                    <p class="f32"><embed align="center" src="/img/time1.svg"></embed>离开始：<span>14</span>小时</p>
+                    <p class="f32"><embed align="center" src="/img/money.svg"></embed>人均：<span>60</span>元</p>
+                    <p class="f32"><embed align="center" src="/img/people.svg"></embed>报名人数：<span>3</span>人</p>
+                </div>
+            </div>
+        </a>
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_hd">
+                <img class="index_pic" src="/img/logo.png"/>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p class="txt"><span class="f36">我们都是少数派</span></p>
+                <p class="txt"><embed align="center" class="index_icon" src="/img/time.svg"></embed><span class="f36">2016-5-25 21时</span></p>
+                <p class="f32">12345来呀第二行汉街老街烧烤，睡不着的都过来呀第二行</p>
+            </div>
+            <div class="weui_cell_ft">
+                <div>
+                    <p class="f32"><embed align="center" src="/img/foot.svg"></embed>距离：约<span>31</span>公里</p>
+                    <p class="f32"><embed align="center" src="/img/time1.svg"></embed>离开始：<span>34</span>小时</p>
+                    <p class="f32"><embed align="center" src="/img/money.svg"></embed>人均：<span>60</span>元</p>
+                    <p class="f32"><embed align="center" src="/img/people.svg"></embed>报名人数：<span>3</span>人</p>
+                </div>
+            </div>
+        </a>
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_hd">
+                <img class="index_pic" src="/img/logo.png"/>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p class="txt"><span class="f36">我们都是少数派</span></p>
+                <p class="txt"><embed align="center" class="index_icon" src="/img/time.svg"></embed><span class="f36">2016-5-25 21时</span></p>
+                <p class="f32">走过路过不要错过233</p>
+            </div>
+            <div class="weui_cell_ft">
+                <div>
+                    <p class="f32"><embed align="center" src="/img/foot.svg"></embed>距离：约<span>3</span>公里</p>
+                    <p class="f32"><embed align="center" src="/img/time1.svg"></embed>离开始：<span>14</span>小时</p>
+                    <p class="f32"><embed align="center" src="/img/money.svg"></embed>人均：<span>601</span>元</p>
+                    <p class="f32"><embed align="center" src="/img/people.svg"></embed>报名人数：<span>3</span>人</p>
+                </div>
+            </div>
+        </a>
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_hd">
+                <img class="index_pic" src="/img/logo.png"/>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p class="txt"><span class="f36">我们都是少数派</span></p>
+                <p class="txt"><embed align="center" class="index_icon" src="/img/time.svg"></embed><span class="f36">2016-5-25 21时</span></p>
+                <p class="f32">走过路过不要错过233</p>
+            </div>
+            <div class="weui_cell_ft">
+                <div>
+                    <p class="f32"><embed align="center" src="/img/foot.svg"></embed>距离：约<span>3</span>公里</p>
+                    <p class="f32"><embed align="center" src="/img/time1.svg"></embed>离开始：<span>14</span>小时</p>
+                    <p class="f32"><embed align="center" src="/img/money.svg"></embed>人均：<span>601</span>元</p>
+                    <p class="f32"><embed align="center" src="/img/people.svg"></embed>报名人数：<span>3</span>人</p>
+                </div>
+            </div>
+        </a>
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_hd">
+                <img class="index_pic" src="/img/logo.png"/>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p class="txt"><span class="f36">我们都是少数派</span></p>
+                <p class="txt"><embed align="center" class="index_icon" src="/img/time.svg"></embed><span class="f36">2016-5-25 21时</span></p>
+                <p class="f32">12345来呀第二行汉街老街烧烤，睡不着的都过来呀第二行</p>
+            </div>
+            <div class="weui_cell_ft">
+                <div>
+                    <p class="f32"><embed align="center" src="/img/foot.svg"></embed>距离：约<span>31</span>公里</p>
+                    <p class="f32"><embed align="center" src="/img/time1.svg"></embed>离开始：<span>34</span>小时</p>
+                    <p class="f32"><embed align="center" src="/img/money.svg"></embed>人均：<span>60</span>元</p>
+                    <p class="f32"><embed align="center" src="/img/people.svg"></embed>报名人数：<span>3</span>人</p>
+                </div>
+            </div>
+        </a>
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_hd">
+                <img class="index_pic" src="/img/logo.png"/>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p class="txt"><span class="f36">我们都是少数派</span></p>
+                <p class="txt"><embed align="center" class="index_icon" src="/img/time.svg"></embed><span class="f36">2016-5-25 21时</span></p>
+                <p class="f32">走过路过不要错过233</p>
+            </div>
+            <div class="weui_cell_ft">
+                <div>
+                    <p class="f32"><embed align="center" src="/img/foot.svg"></embed>距离：约<span>3</span>公里</p>
+                    <p class="f32"><embed align="center" src="/img/time1.svg"></embed>离开始：<span>14</span>小时</p>
+                    <p class="f32"><embed align="center" src="/img/money.svg"></embed>人均：<span>601</span>元</p>
+                    <p class="f32"><embed align="center" src="/img/people.svg"></embed>报名人数：<span>3</span>人</p>
+                </div>
+            </div>
+        </a>
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_hd">
+                <img class="index_pic" src="/img/logo.png"/>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p class="txt"><span class="f36">我们都是少数派</span></p>
+                <p class="txt"><embed align="center" class="index_icon" src="/img/time.svg"></embed><span class="f36">2016-5-25 21时</span></p>
+                <p class="f32">走过路过不要错过233</p>
+            </div>
+            <div class="weui_cell_ft">
+                <div>
+                    <p class="f32"><embed align="center" src="/img/foot.svg"></embed>距离：约<span>3</span>公里</p>
+                    <p class="f32"><embed align="center" src="/img/time1.svg"></embed>离开始：<span>14</span>小时</p>
+                    <p class="f32"><embed align="center" src="/img/money.svg"></embed>人均：<span>601</span>元</p>
+                    <p class="f32"><embed align="center" src="/img/people.svg"></embed>报名人数：<span>3</span>人</p>
+                </div>
+            </div>
+        </a>
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_hd">
+                <img class="index_pic" src="/img/logo.png"/>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p class="txt"><span class="f36">我们都是少数派</span></p>
+                <p class="txt"><embed align="center" class="index_icon" src="/img/time.svg"></embed><span class="f36">2016-5-25 21时</span></p>
+                <p class="f32">12345来呀第二行汉街老街烧烤，睡不着的都过来呀第二行</p>
+            </div>
+            <div class="weui_cell_ft">
+                <div>
+                    <p class="f32"><embed align="center" src="/img/foot.svg"></embed>距离：约<span>31</span>公里</p>
+                    <p class="f32"><embed align="center" src="/img/time1.svg"></embed>离开始：<span>34</span>小时</p>
+                    <p class="f32"><embed align="center" src="/img/money.svg"></embed>人均：<span>60</span>元</p>
+                    <p class="f32"><embed align="center" src="/img/people.svg"></embed>报名人数：<span>3</span>人</p>
+                </div>
+            </div>
+        </a>
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_hd">
+                <img class="index_pic" src="/img/logo.png"/>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p class="txt"><span class="f36">我们都是少数派</span></p>
+                <p class="txt"><embed align="center" class="index_icon" src="/img/time.svg"></embed><span class="f36">2016-5-25 21时</span></p>
+                <p class="f32">走过路过不要错过233</p>
+            </div>
+            <div class="weui_cell_ft">
+                <div>
+                    <p class="f32"><embed align="center" src="/img/foot.svg"></embed>距离：约<span>3</span>公里</p>
+                    <p class="f32"><embed align="center" src="/img/time1.svg"></embed>离开始：<span>14</span>小时</p>
+                    <p class="f32"><embed align="center" src="/img/money.svg"></embed>人均：<span>601</span>元</p>
+                    <p class="f32"><embed align="center" src="/img/people.svg"></embed>报名人数：<span>3</span>人</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+<br/>
+<br/>
+<br/>
+<a href="/searchCode">番号查询</a>
+<a href="/actPublish">发布活动</a>
+<a href="/actDetail">活动详情</a>
+<a href="/test_downloadpic">测试下载图片</a>
+<br/>
+<br/>
+<div class="nav ">
+    <div class="weui_navbar_item"><img src="/img/nav_act.png"/><span>活动</span></div>
+    <div class="weui_navbar_item"><img src="/img/nav_foot.png"/><span>足迹</span></div>
+    <div class="weui_navbar_item"><img src="/img/nav_me.png"/><span>我的</span></div>
+</div>
 </body>
+<!--定位-->
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=MCmkiOVABEu22Nx7L68pVPUDblPeRR27"></script>
+<script src="/js/location.js"></script>
 </html>
