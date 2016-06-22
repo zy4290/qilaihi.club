@@ -8,6 +8,7 @@ from tornado.options import define, options
 
 from api.v1 import eventservice
 from api.v1 import lbsservice
+from api.v1 import userservice
 from api.v1 import wxwebservice
 from route import page
 from weixin import wxservice
@@ -40,9 +41,13 @@ if __name__ == "__main__":
         (r'/api/v1/event/get', eventservice.GetEventHandler),
         (r'/api/v1/event/query', eventservice.QueryEventHandler),
 
+        # 用户API
+        (r'/api/v1/user-info/get', userservice.GetUserInfoHandler),
+        (r'/api/v1/user-info/update', userservice.UpdateUserInfoHandler),
+
         # 微信页面 API
-        (r'/api/v1/wxweb/user/get', wxwebservice.GetUserInfoHandler),
-        (r'/api/v1/wxweb/url/sign', wxwebservice.SignatureHandler),
+        (r'/api/v1/wx-web/user/get', wxwebservice.GetUserInfoHandler),
+        (r'/api/v1/wx-web/url/sign', wxwebservice.SignatureHandler),
 
         # 微信服务入口
         (r'/weixin', wxservice.WeiXinMessageHandler),
