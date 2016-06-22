@@ -40,10 +40,13 @@ if __name__ == "__main__":
         (r'/api/v1/event/publish', eventservice.PublishEventHandler),
         (r'/api/v1/event/get', eventservice.GetEventHandler),
         (r'/api/v1/event/query', eventservice.QueryEventHandler),
+        (r'/api/v1/event/star', eventservice.StarEventHandler),
+        (r'/api/v1/event/unstar', eventservice.UnStarEventHandler),
 
         # 用户API
-        (r'/api/v1/user-info/get', userservice.GetUserInfoHandler),
-        (r'/api/v1/user-info/update', userservice.UpdateUserInfoHandler),
+        (r'/api/v1/user/info/get', userservice.GetUserInfoHandler),
+        (r'/api/v1/user/info/update', userservice.UpdateUserInfoHandler),
+        (r'/api/v1/user/star/list', userservice.UserStarListHandler),
 
         # 微信页面 API
         (r'/api/v1/wx-web/user/get', wxwebservice.GetUserInfoHandler),

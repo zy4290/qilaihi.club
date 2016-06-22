@@ -11,6 +11,7 @@ from tornado import gen
 from api.postonlyhandler import PostOnlyHandler
 from api.response import Response
 from model import dbutil
+from model.star import Star
 from model.user import User
 
 
@@ -54,6 +55,30 @@ class UpdateUserInfoHandler(PostOnlyHandler):
             self.write(Response(
                 status=1, msg='ok',
                 result={}
+            ).json())
+        except AttributeError as e:
+            self.write(Response(msg='sorry，亲，修改用户信息时必须包含openid').json())
+            logging.exception('UpdateUserInfoHandler error: {0}'.format(str(e)))
+        except DoesNotExist as e:
+            self.write(Response(msg='sorry，亲，用户不存在 openid={0}'.format(openid)).json())
+            logging.exception('UpdateUserInfoHandler error: {0}'.format(str(e)))
+        except Exception as e:
+            self.write(Response(msg='sorry，亲，修改用户信息失败').json())
+            logging.exception('UpdateUserInfoHandler error: {0}'.format(str(e)))
+
+
+class UserStarListHandler(PostOnlyHandler):
+    @gen.coroutine
+    def post(self):
+        openid = None
+        try:
+            request = json.loads(self.request.body.decode())
+            openid = request.get('openid', None)
+            results = yield dbutil.do(Star.select().where((Star.openid == openid) & (Star.status == 1)).dicts)
+            stars = [star for star in results]
+            self.write(Response(
+                status=1, msg='ok',
+                result=stars
             ).json())
         except AttributeError as e:
             self.write(Response(msg='sorry，亲，修改用户信息时必须包含openid').json())

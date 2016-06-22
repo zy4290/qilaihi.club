@@ -14,6 +14,8 @@ from api.postonlyhandler import PostOnlyHandler
 from api.response import Response
 from model import dbutil
 from model.event import Event
+from model.star import Star
+from model.user import User
 from service import event as event_service
 
 
@@ -41,7 +43,7 @@ class GetEventHandler(PostOnlyHandler):  # 按番号查询活动
             logging.exception('GetEventHandler error: {0}'.format(str(e)))
 
 
-class QueryEventHandler(PostOnlyHandler):  # 按番号查询活动
+class QueryEventHandler(PostOnlyHandler):  # 按番号模糊检索活动
 
     @gen.coroutine
     def post(self):
@@ -87,14 +89,10 @@ class PublishEventHandler(PostOnlyHandler):  # 创建活动
 
 
 class ListEventHandler(PostOnlyHandler):  # 分页查询活动列表
-
-    # logger = logging.getLogger('ListEventHandler')
-
     @gen.coroutine
     def post(self):
         try:
             data = json.loads(self.request.body.decode())
-            # self.logger.log(logging.DEBUG, data)
             logging.debug(data)
             # 默认查询第一页
             page_number = data.get('page_number', 1)
@@ -108,3 +106,67 @@ class ListEventHandler(PostOnlyHandler):  # 分页查询活动列表
         except Exception as e:
             self.write(Response(msg='sorry，亲，活动查询失败').json())
             logging.exception('CreateEventHandler error: {0}'.format(str(e)))
+
+
+class StarEventHandler(PostOnlyHandler):  # 关注活动
+    @gen.coroutine
+    def post(self):
+        try:
+            data = json.loads(self.request.body.decode())
+            code = data['eventcode']
+            openid = data['openid']
+            star = None
+            try:
+                star = yield dbutil.do(Star.select().where(
+                    (Star.eventcode == code) & (Star.openid == openid)
+                ).get)
+            except:
+                pass
+            if star:
+                if star.status == 1:  # 已经关注
+                    raise RuntimeError
+                else:  # 已经取消关注
+                    star.status = 1
+                    star.updatetime = datetime.datetime.now()
+            else:  # 首次关注
+                results = yield [
+                    dbutil.do(Event.select(Event.id, Event.code).where(Event.code == code).get),
+                    dbutil.do(User.select(User.id, User.openid).where(User.openid == openid).get)
+                ]
+                event = results[0]
+                user = results[1]
+                star = Star(
+                    eventid=event.get_id(),
+                    eventcode=event.code,
+                    userid=user.get_id(),
+                    openid=user.openid,
+                    createtime=datetime.datetime.now(),
+                    status=1
+                )
+            yield dbutil.do(star.save)
+            self.write(Response(status=1, msg='ok', result={}).json())
+        except RuntimeError as e:
+            self.write(Response(msg='sorry，亲，用户已经关注该活动').json())
+            logging.exception('StarEventHandler error: {0}'.format(str(e)))
+        except Exception as e:
+            self.write(Response(msg='sorry，亲，关注活动失败').json())
+            logging.exception('StarEventHandler error: {0}'.format(str(e)))
+
+
+class UnStarEventHandler(PostOnlyHandler):  # 取消关注活动
+    @gen.coroutine
+    def post(self):
+        try:
+            data = json.loads(self.request.body.decode())
+            code = data['eventcode']
+            openid = data['openid']
+            star = yield dbutil.do(Star.select().where(
+                (Star.eventcode == code) & (Star.openid == openid)
+            ).get)
+            star.status = -1
+            star.updatetime = datetime.datetime.now()
+            yield dbutil.do(star.save)
+            self.write(Response(status=1, msg='ok', result={}).json())
+        except Exception as e:
+            self.write(Response(msg='sorry，亲，取消关注活动失败').json())
+            logging.exception('UnStarEventHandler error: {0}'.format(str(e)))

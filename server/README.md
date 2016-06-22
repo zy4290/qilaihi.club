@@ -8,7 +8,6 @@
   * ?-根据用户偏好随机推送本地区活动图文
   * $/￥-获取红包口令
 * “活动”页面API
-  * 关注活动
   * 参加活动
   * 评论
   * 评分（人）
@@ -119,7 +118,7 @@ url_prefix = 'http://u.qilaihi.me/'
         "code":"大王派我来巡山"
     }
 ```
-##### 2.4 发布活动
+##### 2.3 发布活动
 接口地址：
 ```
     http://qilaihi.me/api/v1/event/publish
@@ -128,21 +127,21 @@ url_prefix = 'http://u.qilaihi.me/'
 ```
     {
         "code":"唯一的番号",
-        "mediaids":["media_id1", "media_id2", ...]
-        "title":"活动简介"
-        "time":"YYYY-MM-DD HH:mm:ss"
-        "aacost":68
-        "tag":"户外"
-        "expectsignups":4
-        "agerange":3
-        "location":"东湖风景区"
-        "address":"湖北省武汉市武昌区"
-        "latitude":"30.575504"
-        "longitude":"114.379627"
+        "mediaids":["media_id1", "media_id2", ...],
+        "title":"活动简介",
+        "time":"YYYY-MM-DD HH:mm:ss",
+        "aacost":68,
+        "tag":"户外",
+        "expectsignups":4,
+        "agerange":3,
+        "location":"东湖风景区",
+        "address":"湖北省武汉市武昌区",
+        "latitude":"30.575504",
+        "longitude":"114.379627",
         "organizerid":"o-7des8JLh-sCql5MZ2_oSLImxdc"
     }
 ```
-##### 2.3 检索活动
+##### 2.4 检索活动
 本接口根据传入的字符全文检索番号字段，按相似度由高到低返回检索结果`
 接口地址：
 ```
@@ -159,11 +158,35 @@ url_prefix = 'http://u.qilaihi.me/'
         "code":"dwpwlxs"
     }
 ```
+##### 2.5 关注活动
+接口地址：
+```
+    http://qilaihi.me/api/v1/event/star
+```
+请求数据示例:
+```
+    {
+        "code":"大王派我来巡山",
+        "openid":"o-7des5YXGWT7crk4pjn5T68sHi4"
+    }
+```
+##### 2.6 取消关注活动
+接口地址：
+```
+    http://qilaihi.me/api/v1/event/unstar
+```
+请求数据示例:
+```
+    {
+        "code":"大王派我来巡山",
+        "openid":"o-7des5YXGWT7crk4pjn5T68sHi4"
+    }
+```
 #### 3. 微信JS SDK
 ##### 3.1 拉取用户信息
 接口地址：
 ```
-    http://qilaihi.me/api/v1/wxweb/user/get
+    http://qilaihi.me/api/v1/wx-web/user/get
 ```
 请求数据示例：
 ```
@@ -175,7 +198,7 @@ url_prefix = 'http://u.qilaihi.me/'
 ##### 3.2 URL签名
 接口地址：
 ```
-    http://qilaihi.me/api/v1/wxweb/url/sign
+    http://qilaihi.me/api/v1/wx-web/url/sign
 ```
 请求数据示例：
 ```
@@ -183,6 +206,42 @@ url_prefix = 'http://u.qilaihi.me/'
         "url":"http://qilaihi.me/event?code=上山打老虎" // 该url不需要urlencode，微信所附加的#号及后面的内容需要移除
     }
 ```
-
-
+#### 4. user
+##### 4.1 查询用户信息 
+接口地址:
+```
+    http://qilaihi.me/api/v1/user/info/get
+```
+请求数据示例:
+```
+    {
+        "openid":"o-7des8JLh-sCql5MZ2_oSLImxdc"
+    }
+```
+##### 4.2 更新用户信息 
+接口地址:
+```
+    http://qilaihi.me/api/v1/user/info/get
+```
+请求数据示例:
+```
+    {
+        "id":2
+        "openid":"o-7des8JLh-sCql5MZ2_oSLImxdc",
+        "mobile":12312341234,
+        "tagprefs":"[\"亲子\",\"爬山\",\"麻将\",\"撸串\"]"
+    }
+```
+说明:目前通过查询接口获取的属性都是可以修改的，后面会增加限制，仅用于更新用户手机号，偏好等信息。
+##### 4.3 查询用户关注活动列表 
+接口地址:
+```
+    http://qilaihi.me/api/v1/user/star/list
+```
+请求数据示例:
+```
+    {
+        "openid":"o-7des8JLh-sCql5MZ2_oSLImxdc",
+    }
+```
 
