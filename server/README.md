@@ -119,7 +119,7 @@ url_prefix = 'http://u.qilaihi.me/'
         "code":"大王派我来巡山"
     }
 ```
-##### 2.3 发布活动 
+##### 2.4 发布活动
 接口地址：
 ```
     http://qilaihi.me/api/v1/event/publish
@@ -160,18 +160,6 @@ url_prefix = 'http://u.qilaihi.me/'
     }
 ```
 #### 3. 微信JS SDK
-##### 3.1 拉取用户信息
-接口地址：
-```
-    http://qilaihi.me/api/v1/wxweb/user/get
-```
-请求数据示例：
-```
-    {
-        "code":"callback_url_code"
-        "scope":"snsapi_userinfo", // 默认为snsapi_base，仅获取openid
-    }
-```
 ##### 3.1 拉取用户信息
 接口地址：
 ```
