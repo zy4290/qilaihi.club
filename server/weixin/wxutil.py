@@ -202,11 +202,11 @@ def get_user_info(openid):
         result['errcode']
     except Exception:
         user = dict_to_model(User, result, ignore_unknown=True)
-        if user.createtime is None:
-            user.createtime = datetime.datetime.now()
         if id:
             user.set_id(id)
             user.updatetime = datetime.datetime.now()
+        else:
+            user.createtime = datetime.datetime.now()
         # yield dbutil.do(user.save)
         return model_to_dict(user)
     logging.error('拉取用户信息出错：{0}'.format(result))
