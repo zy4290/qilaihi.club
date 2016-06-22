@@ -1,0 +1,139 @@
+/*rest*/
+html, body, div, span, applet, object, iframe, h1, h2, h3,
+h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address,
+big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, table, caption, tbody, tfoot,
+thead, tr, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    vertical-align: baseline;
+}
+:focus {
+    outline: 0;
+}
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+caption, th, td {
+    text-align: left;
+    font-weight: normal;
+}
+a img, iframe {
+    border: none;
+}
+ol, ul {
+    list-style: none;
+}
+input, textarea, select, button {
+    font-family: inherit;
+}
+select {
+    margin: inherit;
+}
+/* Fixes incorrect placement of numbers in ol’s in IE6/7 */
+ol { margin-left:2em; }
+/* == clearfix == */
+.clearfix:after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix {display: inline-block;}
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+html{font-size:62.5%;}
+body{font-family: "微软雅黑";}
+a{text-decoration: none;}
+i{font-style: normal;}
+*{box-sizing:border-box;-webkit-box-sizing: border-box;}
+/*common*/
+body path{ fill: #0095e0!important;}
+.db{ display: block;}
+.dib{ display: inline-block;}
+.fl{ float: left;}
+.fr{ float: right;}
+.f32{ font-size: 0.32rem;}
+.f36{ font-size: 0.36rem;}
+.f40{ font-size: 0.4rem;}
+/*header*/
+.header{ height: 1.35rem; text-align: center; box-sizing: border-box;position: relative; border-bottom: 1px solid #272727;padding:0 0.54rem; overflow: hidden;}
+.logo{ margin-top: 0.2rem;}
+.logo img{ width: 1rem; height: 1rem; display: block;}
+.top_place{ height: 100%; width: 2.2rem; margin: 0 auto; text-align: center; overflow: hidden; position: absolute; left: 50%; margin-left: -1rem;}
+.top_place a{ width: 100%; height: 100%; display: block;}
+.top_place span{ display: inline-block; font-size: 0.5rem; line-height: 1.35rem; float: left; color: #333}
+.top_place embed{ width: 0.5rem; float: right; margin-top: 0.4rem}
+.add_active{ display: inline-block; font-size: 0.5rem; width: 3rem;}
+.add_active span{display: inline-block; font-size: 0.5rem; line-height: 1.35rem; float: right; color: #333;}
+.add_active embed{ width: 0.5rem;margin-top: 0.4rem; float: right;}
+.top_back embed{ width: 0.5rem; margin-top: 0.4rem; float: left;}
+.top_back{ color: #333; font-size: 0.5rem; line-height: 1.35rem; width: 1.5rem;}
+#allmap{ width: 0; height: 0;}
+
+/*main*/
+.index_pic{ height:2rem; width: 2rem; display: block;}
+.index_main{ padding-bottom: 1.3rem;}
+.index_main embed{ height: 0.4rem; width: 0.4rem;}
+.index_main .txt{ height: 0.5rem; line-height: 0.5rem;}
+.index_main .weui_cell_bd{ padding-left: 0.1rem;}
+.index_main .weui_cell_ft{ text-align: left;}
+.index_main .weui_cells{ margin-top: 0!important;}
+
+.pl_main .weui_search_bar{ height: 1.2rem;}
+.pl_main .weui_search_input{ margin-top: 0.05rem;}
+.pl_main embed{ width: 0.5rem}
+/*.pl_main .weui_cells .weui_cell_ft { display: none;}*/
+.pl_main .placelist .weui_cell_ft:after { /*content: " "*/; display: inline-block; -webkit-transform: rotate(45deg); transform: rotate(45deg); height: 6px; width: 6px; border-width: 2px 2px 0 0; border-color: #C8C8CD; border-style: solid; position: relative; top: -2px; top: -1px; margin-left: .3em; }
+
+.rel_main .textarea{ height:2rem;}
+.rel_main embed{ width: 0.4rem}
+.rel_main .textarea .weui_cell_bd{ height:100%;}
+.rel_main .textarea .weui_textarea_counter{ position: absolute; bottom: 0; right: 1rem;}
+.release embed{ width: 1rem;}
+.release{ width: 2.5rem; margin: 1rem auto; text-align: center; font-size: 0.6rem; padding-bottom: 1rem;}
+.release span{ color: #333;}
+
+.det_main embed{ width: 0.4rem;}
+.det_main .weui_cells{ margin-top: 0!important; font-weight: bolder;}
+.host_img img{ width: 2.5rem; height: 2.5rem; border-radius: 50%;}
+
+.suc_main{ font-size: 0.5rem; text-align: center;}
+.suc_main .tip{ text-align: center; font-size: 0.5rem; margin-top: 2rem; font-weight: bolder;}
+.suc_main .tip .weui_icon_success{ width: 0.6rem;}
+.suc_main .more{ margin-top: 2rem;}
+.suc_main .more a{ width: 30%; display: inline-block; margin-top: 0.5rem; color: #333; font-weight: 300;}
+.suc_main .more p{ font-weight: bolder; color: #333;}
+.suc_main embed{ width: 0.5rem;}
+.share{ width: 100%; height: 100%; background: #000; opacity: 0.9; position: fixed; top: 0;}
+.share .pic1{ width: 100%;}
+.share a{ overflow: hidden; display: block; position: absolute; top: 8rem; left: 50%; margin-left: -1.5rem;}
+.share a img{ width:3rem;}
+/*nav*/
+.nav{ display: flex; position: fixed; z-index: 1; bottom: 0; width: 100%; background-color: #fafafa; height: 1.3rem}
+.nav:after{ content: " "; position: absolute; left: 0; top: 0; width: 100%; height: 1px; border-top: 1px solid #BCBAB6; color: #BCBAB6;transform-origin: 0 100%; transform: scaleY(0.5);}
+.nav .weui_navbar_item{padding:0 0.8rem;}
+.nav img{ width: 0.9rem; float: left; margin-top: 0.3rem;}
+.nav span{ float: right; line-height: 1.3rem;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

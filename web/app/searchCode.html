@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>番号查询</title>
+    <script src="/js/jquery.min.js"></script>
+    <script>
+        function getEvents() {
+            code = $("input").val();
+            $.ajax({
+                type: "POST",
+                url: "/api/v1/event/get",
+                data: JSON.stringify({
+                    code: code,
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    <input type="text" width="100px">
+    <button onclick="getEvents()">查询</button>
+</body>
+</html>
